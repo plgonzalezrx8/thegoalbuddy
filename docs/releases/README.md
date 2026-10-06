@@ -40,7 +40,7 @@ Run the supported gate with the actual report and exported Sites checkout:
 npm run check:readiness -- --report audit/typescript-sites-migration/readiness.json --site-checkout /workspace/sites/thegoalbuddy
 ```
 
-The required checks are `typecheck`, `generated`, `sourceTests`, `node18`, `node24`, `nativeCodex`, `nativeClaude`, `boardBrowser`, `websiteBrowser`, `hostedSite`, and `independentReview`. Each passing stage needs a nonempty evidence file and its SHA-256. Independent review must have `scope: "final"`; hosted evidence must prove browser success and carry the matching Sites identities. The report also records `schemaVersion: 1`, `package`, `version`, `sourceCommit`, `fingerprint`, and `sites`. A blocked report is retained honestly and must fail the gate.
+The required checks are `typecheck`, `generated`, `sourceTests`, `node18`, `node24`, `nativeCodex`, `nativeClaude`, `boardBrowser`, `websiteBrowser`, `hostedSite`, and `independentReview`. Each passing stage references a hashed JSON envelope with `schemaVersion: 1`, its exact `stage`, `status: "pass"`, the current `fingerprint` and `sourceCommit`, and a nonempty `evidence` array of `{path, sha256}` child log/report references. The verifier checks those child files too. Old evidence cannot be relabeled current by changing only the top-level readiness report. Independent-review evidence also requires `scope: "final"`, `codeQuality: "pass"`, `specification: "pass"`, and distinct nonempty `reviewer`/`implementer` identities. Hosted evidence additionally requires `browserStatus: "pass"` and matching `sites` identities. The report also records `schemaVersion: 1`, `package`, `version`, `sourceCommit`, `fingerprint`, and `sites`. A blocked report is retained honestly and must fail the gate.
 
 A field saying `approved` is evidence data, not publication authority. The user must authorize publication separately. Confirm that `package.json`, both native plugin manifest versions, and the intended release tag agree. Check the latest registry record and exact target version with the bounded official-registry guards; an exact version already published is not permission to overwrite it.
 
@@ -63,7 +63,7 @@ Do not rebuild or repack after verification. A source change invalidates affecte
 
 ## 4. Publish only the authorized, verified artifact
 
-After explicit authorization, run the supported `publish:check` with the readiness report and the verified artifact. Directory `prepublishOnly` remains fail-closed. Publishing a tarball can have different lifecycle behavior from publishing a directory; do not assume `npm publish <tarball>` automatically runs the checkout's preflight.
+After explicit authorization, run the supported `publish:check` with the readiness report and the verified artifact. Directory `prepublishOnly` always rejects directory publication, which would repack untested bytes. Publishing a tarball can have different lifecycle behavior from publishing a directory; do not assume `npm publish <tarball>` automatically runs the checkout's preflight.
 
 Use `npm run publish:check -- --readiness <report> --artifact <artifact-verification-report> --site-checkout <checkout>` to check the tested artifact. This verifies source and artifact integrity without repacking; it does not publish or supply authorization.
 

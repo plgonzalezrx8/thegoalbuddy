@@ -8,7 +8,14 @@ import { releaseInputFingerprint, sha256, sourceCommit } from "./release-inputs.
 import { verifyPackageContents, type PackageContentsReport } from "./check-package.mjs";
 
 export const requiredChecks = ["typecheck", "generated", "sourceTests", "node18", "node24", "nativeCodex", "nativeClaude", "boardBrowser", "websiteBrowser", "hostedSite", "independentReview"] as const;
+export type ReleaseStage = typeof requiredChecks[number];
 export interface EvidenceReference { path: string; sha256: string }
+export interface StageEvidenceEnvelope {
+  schemaVersion: 1; stage: ReleaseStage; status: "pass"; fingerprint: string; sourceCommit: string;
+  evidence: EvidenceReference[];
+  browserStatus?: "pass"; sites?: SitesBinding;
+  scope?: "final"; codeQuality?: "pass"; specification?: "pass"; reviewer?: string; implementer?: string;
+}
 export interface PassedCheck { status: "pass"; evidence: EvidenceReference; scope?: "final" }
 export interface SitesBinding { projectId: string; sourceCommit: string; versionId: string; deploymentId: string; url: string; audience: "owner-private" | "public"; websiteFingerprint: string }
 export interface ReadinessReport {
@@ -41,6 +48,26 @@ function readEvidence(value: unknown, root: string): { reference: EvidenceRefere
   if (!bytes.length || sha256(bytes) !== reference.sha256) throw new Error("Readiness evidence is empty or has changed.");
   return { reference, bytes };
 }
+function verifyStageEvidence(bytes: Buffer, stage: ReleaseStage, fingerprint: string, commit: string, root: string): Record<string, unknown> {
+  let envelope: unknown;
+  try { envelope = parseJson(bytes.toString("utf8")); } catch { throw new Error(`Invalid ${stage} stage evidence envelope.`); }
+  if (!isRecord(envelope) || envelope.schemaVersion !== 1 || envelope.stage !== stage || envelope.status !== "pass"
+    || envelope.fingerprint !== fingerprint || envelope.sourceCommit !== commit) {
+    throw new Error(`The ${stage} stage evidence envelope is stale, mismatched or non-passing.`);
+  }
+  if (!Array.isArray(envelope.evidence) || !envelope.evidence.length) throw new Error(`The ${stage} stage requires retained child evidence.`);
+  for (const child of envelope.evidence) readEvidence(child, root);
+  if (stage === "independentReview") {
+    if (envelope.scope !== "final" || envelope.codeQuality !== "pass" || envelope.specification !== "pass") {
+      throw new Error("Final independent review evidence requires passing specification and code quality verdicts.");
+    }
+    const reviewer = text(envelope.reviewer, "independent review reviewer").trim().toLowerCase();
+    const implementer = text(envelope.implementer, "independent review implementer").trim().toLowerCase();
+    if (reviewer === implementer) throw new Error("Final independent review requires a reviewer distinct from the implementer.");
+  }
+  return envelope;
+}
+
 function sitesBinding(value: unknown): SitesBinding {
   if (!isRecord(value) || !["owner-private", "public"].includes(String(value.audience))) throw new Error("Invalid Sites identity/audience evidence.");
   const url = text(value.url, "Sites URL");
@@ -71,9 +98,10 @@ export function verifyReadiness({ root, reportPath, siteCheckout = "/workspace/s
     if (!isRecord(check) || check.status !== "pass") throw new Error(`Readiness requires passing ${name} verification.`);
     if (name === "independentReview" && check.scope !== "final") throw new Error("A preliminary independent review cannot authorize final readiness.");
     const evidence = readEvidence(check.evidence, root);
+    const envelope = verifyStageEvidence(evidence.bytes, name, fingerprint, commit, root);
     checks[name] = { status: "pass", evidence: evidence.reference, ...(name === "independentReview" ? { scope: "final" } : {}) };
     if (name === "hostedSite") {
-      hosted = parseJson(evidence.bytes.toString("utf8"));
+      hosted = envelope;
       if (!isRecord(hosted) || hosted.status !== "pass" || hosted.browserStatus !== "pass") throw new Error("Hosted Sites browser verification has not passed.");
     }
   }

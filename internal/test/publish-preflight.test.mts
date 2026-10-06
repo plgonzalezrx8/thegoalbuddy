@@ -2,9 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { publishPreflight, type PreflightOptions } from "../cli/publish-preflight.mjs";
+import { parsePackage, parseJson } from "../cli/contracts.mjs";
 import { type ReadinessReport } from "../cli/release-readiness.mjs";
 
-const pkg = { ...JSON.parse(readFileSync("package.json", "utf8")), version: "0.5.0" };
+const pkg = { ...parsePackage(parseJson(readFileSync("package.json", "utf8"))), version: "0.5.0" };
 const response = (data: unknown) => ({ status: 0, stdout: JSON.stringify(data) });
 const passed = { status: "pass" as const, evidence: { path: "synthetic", sha256: "a".repeat(64) } };
 const readiness: ReadinessReport = { schemaVersion: 1, package: "thegoalbuddy", version: "0.5.0", sourceCommit: "a".repeat(40), fingerprint: "b".repeat(64),
@@ -71,4 +72,11 @@ test("publication rejects an untested or mismatched artifact before registry acc
   const f = fixture({ failEarlyArtifact: true });
   assert.throws(() => publishPreflight(f.options), /untested/);
   assert.deepEqual(f.events, ["readiness", "tested-artifact"]);
+});
+
+test("directory prepublishOnly cannot authorize an untested repack even with verified evidence", () => {
+  const f = fixture();
+  f.options.env = { npm_lifecycle_event: "prepublishOnly" };
+  assert.throws(() => publishPreflight(f.options), /exact verified tarball|directory publication/i);
+  assert.deepEqual(f.events, []);
 });

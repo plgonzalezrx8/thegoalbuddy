@@ -19,6 +19,9 @@ export interface PreflightOptions {
 export function publishPreflight({ root = packageRoot, pkg, runNpm, runStep = runRequiredStep, env = process.env,
   readinessPath = env.THEGOALBUDDY_RELEASE_READINESS, artifactPath = env.THEGOALBUDDY_RELEASE_ARTIFACT,
   siteCheckout = env.THEGOALBUDDY_SITE_CHECKOUT, verifyReady = verifyReadiness, verifyArtifact = verifyTestedArtifact }: PreflightOptions = {}) {
+  if (env.npm_lifecycle_event === "prepublishOnly") {
+    throw new Error("Directory publication would repack untested bytes. Run publish:check, then publish the exact verified tarball only when authorized.");
+  }
   // Evidence and exact tested bytes are mandatory before touching credentials or
   // the registry. These path settings are references, never approval flags.
   const readiness = verifyReady({ root, reportPath: readinessPath, siteCheckout });

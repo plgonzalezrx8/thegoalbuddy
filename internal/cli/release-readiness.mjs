@@ -30,6 +30,33 @@ function readEvidence(value, root) {
         throw new Error("Readiness evidence is empty or has changed.");
     return { reference, bytes };
 }
+function verifyStageEvidence(bytes, stage, fingerprint, commit, root) {
+    let envelope;
+    try {
+        envelope = parseJson(bytes.toString("utf8"));
+    }
+    catch {
+        throw new Error(`Invalid ${stage} stage evidence envelope.`);
+    }
+    if (!isRecord(envelope) || envelope.schemaVersion !== 1 || envelope.stage !== stage || envelope.status !== "pass"
+        || envelope.fingerprint !== fingerprint || envelope.sourceCommit !== commit) {
+        throw new Error(`The ${stage} stage evidence envelope is stale, mismatched or non-passing.`);
+    }
+    if (!Array.isArray(envelope.evidence) || !envelope.evidence.length)
+        throw new Error(`The ${stage} stage requires retained child evidence.`);
+    for (const child of envelope.evidence)
+        readEvidence(child, root);
+    if (stage === "independentReview") {
+        if (envelope.scope !== "final" || envelope.codeQuality !== "pass" || envelope.specification !== "pass") {
+            throw new Error("Final independent review evidence requires passing specification and code quality verdicts.");
+        }
+        const reviewer = text(envelope.reviewer, "independent review reviewer").trim().toLowerCase();
+        const implementer = text(envelope.implementer, "independent review implementer").trim().toLowerCase();
+        if (reviewer === implementer)
+            throw new Error("Final independent review requires a reviewer distinct from the implementer.");
+    }
+    return envelope;
+}
 function sitesBinding(value) {
     if (!isRecord(value) || !["owner-private", "public"].includes(String(value.audience)))
         throw new Error("Invalid Sites identity/audience evidence.");
@@ -78,9 +105,10 @@ export function verifyReadiness({ root, reportPath, siteCheckout = "/workspace/s
         if (name === "independentReview" && check.scope !== "final")
             throw new Error("A preliminary independent review cannot authorize final readiness.");
         const evidence = readEvidence(check.evidence, root);
+        const envelope = verifyStageEvidence(evidence.bytes, name, fingerprint, commit, root);
         checks[name] = { status: "pass", evidence: evidence.reference, ...(name === "independentReview" ? { scope: "final" } : {}) };
         if (name === "hostedSite") {
-            hosted = parseJson(evidence.bytes.toString("utf8"));
+            hosted = envelope;
             if (!isRecord(hosted) || hosted.status !== "pass" || hosted.browserStatus !== "pass")
                 throw new Error("Hosted Sites browser verification has not passed.");
         }

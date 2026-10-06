@@ -40,6 +40,14 @@ function fixture(): Fixture {
   const evidence = { path: "audit/evidence.json", sha256: sha256(evidenceBytes) }, passed = { status: "pass" as const, evidence };
   const report: ReadinessReport = { schemaVersion: 1, package: "thegoalbuddy", version: "0.5.0", sourceCommit: sourceCommit(root), fingerprint: releaseInputFingerprint(root).fingerprint, sites,
     checks: { typecheck: passed, generated: passed, sourceTests: passed, node18: passed, node24: passed, nativeCodex: passed, nativeClaude: passed, boardBrowser: passed, websiteBrowser: passed, hostedSite: passed, independentReview: { ...passed, scope: "final" } } };
+  for (const stage of requiredChecks) {
+    const envelope = { schemaVersion: 1, stage, status: "pass", fingerprint: report.fingerprint, sourceCommit: report.sourceCommit, evidence: [evidence],
+      ...(stage === "hostedSite" ? { browserStatus: "pass", sites } : {}),
+      ...(stage === "independentReview" ? { scope: "final", codeQuality: "pass", specification: "pass", reviewer: "synthetic-reviewer", implementer: "synthetic-implementer" } : {}) };
+    const path = `audit/stages/${stage}.json`, bytes = JSON.stringify(envelope);
+    write(root, path, bytes);
+    report.checks[stage] = { status: "pass", evidence: { path, sha256: sha256(bytes) }, ...(stage === "independentReview" ? { scope: "final" } : {}) };
+  }
   const reportPath = "audit/readiness.json", save = (): void => write(root, reportPath, JSON.stringify(report));
   save();
   return { root, site, reportPath, report, save, close: () => rmSync(directory, { recursive: true, force: true }) };
@@ -92,10 +100,56 @@ for (const [name, change, expected] of [
 
 test("native deployment success cannot replace a blocked hosted browser", () => {
   const f = fixture(); try {
-    const evidence = JSON.stringify({ status: "pass", browserStatus: "blocked", nativeDeployment: "success", sites: f.report.sites });
-    write(f.root, "audit/hosted.json", evidence);
-    f.report.checks.hostedSite = { status: "pass", evidence: { path: "audit/hosted.json", sha256: sha256(evidence) } }; f.save();
+    changeEnvelope(f, "hostedSite", { browserStatus: "blocked", nativeDeployment: "success" });
     assert.throws(() => verify(f), /browser verification/);
+  } finally { f.close(); }
+});
+
+function changeEnvelope(f: Fixture, stage: typeof requiredChecks[number], changes: Record<string, unknown>): void {
+  const path = f.report.checks[stage].evidence.path;
+  const value: unknown = JSON.parse(readFileSync(join(f.root, path), "utf8"));
+  assert.ok(value !== null && typeof value === "object" && !Array.isArray(value));
+  const bytes = JSON.stringify({ ...value, ...changes });
+  write(f.root, path, bytes);
+  f.report.checks[stage].evidence = { path, sha256: sha256(bytes) };
+  f.save();
+}
+for (const stage of requiredChecks) {
+  for (const [field, value] of [["fingerprint", "0".repeat(64)], ["sourceCommit", "0".repeat(40)], ["stage", "differentStage"], ["status", "blocked"], ["schemaVersion", 2]] as const) {
+    test(`${stage} rejects refreshed top-level evidence with wrong inner ${field}`, () => {
+      const f = fixture(); try {
+        changeEnvelope(f, stage, { [field]: value });
+        assert.throws(() => verify(f), /stage evidence|envelope/);
+      } finally { f.close(); }
+    });
+  }
+}
+for (const [field, value] of [["scope", "preliminary"], ["codeQuality", "blocked"], ["specification", "blocked"], ["reviewer", ""], ["reviewer", "synthetic-implementer"]] as const) {
+  test(`a relabeled final review rejects wrong inner ${field} ${value}`, () => {
+    const f = fixture(); try {
+      changeEnvelope(f, "independentReview", { [field]: value });
+      assert.throws(() => verify(f), /independent review/);
+    } finally { f.close(); }
+  });
+}
+test("stages reject envelopes with no retained command or review evidence", () => {
+  const f = fixture(); try {
+    changeEnvelope(f, "nativeCodex", { evidence: [] });
+    assert.throws(() => verify(f), /child evidence/);
+  } finally { f.close(); }
+});
+test("stages reject tampered child evidence even after the envelope hash is refreshed", () => {
+  const f = fixture(); try {
+    changeEnvelope(f, "nativeClaude", { evidence: [{ path: "audit/evidence.json", sha256: "0".repeat(64) }] });
+    assert.throws(() => verify(f), /evidence/);
+  } finally { f.close(); }
+});
+
+test("stage child logs cannot be empty even when their hashes match", () => {
+  const f = fixture(); try {
+    write(f.root, "audit/empty.log", "");
+    changeEnvelope(f, "node24", { evidence: [{ path: "audit/empty.log", sha256: sha256("") }] });
+    assert.throws(() => verify(f), /empty/);
   } finally { f.close(); }
 });
 

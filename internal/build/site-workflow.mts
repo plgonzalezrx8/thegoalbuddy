@@ -71,7 +71,16 @@ if (isDirectRun(import.meta.url)) {
     buffer += chunk;
     if (!buffer.includes("\n")) return;
     process.stdin.pause();
-    try { const input: unknown = JSON.parse(buffer.slice(0, buffer.indexOf("\n"))); buffer = ""; console.log(JSON.stringify(prepareSite(input))); }
+    let input: unknown;
+    try { input = JSON.parse(buffer.slice(0, buffer.indexOf("\n"))); }
+    catch {
+      buffer = "";
+      console.error("Invalid Sites workflow credential packet."); process.exitCode = 1;
+      if (process.stdin.isTTY) process.stdin.setRawMode(false);
+      process.stdin.destroy(); return;
+    }
+    buffer = "";
+    try { console.log(JSON.stringify(prepareSite(input))); }
     catch (error) { console.error(errorMessage(error)); process.exitCode = 1; }
     if (process.stdin.isTTY) process.stdin.setRawMode(false);
     process.stdin.destroy();

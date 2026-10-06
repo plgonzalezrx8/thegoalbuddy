@@ -4,6 +4,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, write
 import { dirname, extname, join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
+import { installSitesCredentialRouting } from "./sites-browser-auth.mjs";
 import { chromium, type Browser, type Page } from "playwright-core";
 import { errorMessage, isDirectRun, repoRoot, writeJson } from "./common.mjs";
 
@@ -117,18 +118,14 @@ export async function browserQa() {
 async function hostedQa(value: unknown) {
   if (!value || typeof value !== "object" || !("url" in value) || typeof value.url !== "string" || !("token" in value) || typeof value.token !== "string" || !("version_id" in value) || typeof value.version_id !== "string") throw new Error("Incomplete hosted QA packet.");
   const origin = new URL(value.url).origin;
-  if (origin !== "https://thegoalbuddy.pete-nektarios.chatgpt.site") throw new Error("Hosted QA credential is restricted to its selected Site origin.");
+  if (origin !== "https://thegoalbuddy.pete-nektarios.chatgpt.site" || ![origin, origin + "/"].includes(value.url)) throw new Error("Hosted QA credential is restricted to its literal selected Site origin.");
   const token = value.token;
   mkdirSync(evidence, { recursive: true });
   const browser = await chromium.launch({ executablePath: "/usr/bin/chromium", args: ["--no-sandbox"], headless: true });
   try {
-    const context = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
+    const context = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"], serviceWorkers: "block" });
     const page = await context.newPage();
-    await page.route("**/*", route => {
-      const headers = route.request().headers();
-      if (new URL(route.request().url()).origin === origin) headers["OAI-Sites-Authorization"] = `Bearer ${token}`;
-      return route.continue({ headers });
-    });
+    await installSitesCredentialRouting(page, origin, token);
     const result = await website(page, value.url, "website-hosted");
     const anonymous = await context.request.get(value.url, { maxRedirects: 0 });
     assert.ok([301, 302, 303, 307, 308, 401, 403].includes(anonymous.status()), "Owner-private Site must challenge anonymous access.");
@@ -147,8 +144,16 @@ if (isDirectRun(import.meta.url)) {
       buffer += chunk;
       if (!buffer.includes("\n")) return;
       process.stdin.pause();
-      const input: unknown = JSON.parse(buffer.slice(0, buffer.indexOf("\n"))); buffer = "";
-      hostedQa(input).catch(error => { console.error(error instanceof Error ? error.stack : errorMessage(error)); process.exitCode = 1; }).finally(() => { if (process.stdin.isTTY) process.stdin.setRawMode(false); process.stdin.destroy(); });
+      let input: unknown;
+      try { input = JSON.parse(buffer.slice(0, buffer.indexOf("\n"))); }
+      catch {
+        buffer = "";
+        console.error("Invalid hosted QA credential packet."); process.exitCode = 1;
+        if (process.stdin.isTTY) process.stdin.setRawMode(false);
+        process.stdin.destroy(); return;
+      }
+      buffer = "";
+      hostedQa(input).catch(() => { console.error("Hosted Site browser verification failed."); process.exitCode = 1; }).finally(() => { if (process.stdin.isTTY) process.stdin.setRawMode(false); process.stdin.destroy(); });
     });
   } else browserQa().catch(error => { console.error(error instanceof Error ? error.stack : errorMessage(error)); process.exitCode = 1; });
 }
