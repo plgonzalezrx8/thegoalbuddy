@@ -127,9 +127,14 @@ async function hostedQa(value: unknown) {
     const page = await context.newPage();
     await installSitesCredentialRouting(page, origin, token);
     const result = await website(page, value.url, "website-hosted");
-    const anonymous = await context.request.get(value.url, { maxRedirects: 0 });
-    assert.ok([301, 302, 303, 307, 308, 401, 403].includes(anonymous.status()), "Owner-private Site must challenge anonymous access.");
-    writeJson(join(evidence, "hosted-results.json"), { browser: await browser.version(), version_id: value.version_id, website: result, access: "owner-private", anonymousStatus: anonymous.status() });
+    const anonymousContext = await browser.newContext({ serviceWorkers: "block" });
+    let anonymousStatus: number;
+    try {
+      const anonymous = await anonymousContext.request.get(value.url, { maxRedirects: 0 });
+      anonymousStatus = anonymous.status();
+      assert.ok([301, 302, 303, 307, 308, 401, 403].includes(anonymousStatus), "Owner-private Site must challenge fresh anonymous access.");
+    } finally { await anonymousContext.close(); }
+    writeJson(join(evidence, "hosted-results.json"), { browser: await browser.version(), version_id: value.version_id, website: result, access: "owner-private", anonymousStatus });
     await context.close();
     console.log("Hosted owner-private Site browser acceptance and anonymous-access boundary passed.");
   } finally { await browser.close(); }
