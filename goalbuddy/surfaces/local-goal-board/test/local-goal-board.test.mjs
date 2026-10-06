@@ -308,50 +308,26 @@ tasks:
   }
 });
 
-test("writes a minimal GoalBuddy web app into the goal directory", () => {
+test("writes a minimal thegoalbuddy web app into the goal directory", () => {
   const appDir = writeBoardApp(resolve("goalbuddy/surfaces/local-goal-board/examples/sample-goal"));
   const html = readFileSync(join(appDir, "index.html"), "utf8");
   const css = readFileSync(join(appDir, "styles.css"), "utf8");
   const js = readFileSync(join(appDir, "app.js"), "utf8");
   const logo = readFileSync(join(appDir, "goalbuddy-mark.png"));
 
-  assert.match(html, /goalbuddy-mark\.png/);
-  assert.match(html, /class="topbar-primary"/);
-  assert.match(html, /class="board-switcher is-empty"/);
-  assert.match(html, /class="github-stars"/);
+  assert.match(html, /id="board"/);
+  assert.match(html, /<dialog[^>]+id="task-modal"/);
+  assert.match(html, /id="goal-criteria"/);
+  assert.match(html, /id="board-status"[^>]+aria-live="polite"/);
   assert.match(html, /id="settings-button"/);
-  assert.match(html, /id="settings-popover"/);
-  assert.match(css, /--canvas: #f7f6f3/);
-  assert.match(css, /\.topbar-primary/);
-  assert.match(css, /\.board-switcher\.is-empty \{\n  display: none;/);
-  assert.match(css, /active-card-orbit/);
-  assert.match(css, /:root\[data-motion="reduce"\] \.task-card\.is-active::before/);
-  assert.match(css, /:root\[data-theme="dark"\]/);
-  assert.match(css, /:root\[data-density="compact"\] \.task-card/);
-  assert.match(css, /:root\[data-completed-visibility="collapse"\]/);
-  assert.match(css, /-webkit-line-clamp: 5/);
-  assert.match(css, /\.subgoal-board/);
-  assert.match(css, /\.board-error/);
-  assert.match(css, /\.board-warning/);
+  assert.match(css, /observatory-sky\.webp/);
   assert.match(js, /new EventSource\("\.\/events"\)/);
   assert.match(js, /fetch\("\.\.\/api\/boards"/);
-  assert.match(js, /fetch\("\.\.\/api\/settings"/);
-  assert.match(js, /fetch\("https:\/\/api\.github\.com\/repos\/tolimarchuk\/goalbuddy"/);
   assert.match(js, /goalbuddy\.localBoardSettings\.v1/);
-  assert.match(js, /document\.documentElement\.dataset\.theme/);
-  assert.match(js, /rememberCurrentBoard/);
-  assert.match(js, /settingsButtonEl\.setAttribute\("aria-label"/);
-  assert.match(js, /animateCardMoves/);
-  assert.match(js, /card\.animate/);
-  assert.match(js, /highlightMovingCards/);
-  assert.match(js, /renderSubgoal/);
-  assert.match(js, /renderBoardError/);
-  assert.match(js, /renderBoardWarning/);
-  assert.match(js, /parseWarning/);
-  assert.match(js, /"badge harness"/);
-  assert.match(css, /\.badge\.harness/);
-  assert.match(js, /boardOptionLabel/);
-  assert.match(js, /duration: changedColumn \? 980 : 520/);
+  assert.match(js, /modalEl\.showModal\(\)/);
+  for(const asset of ["constellation.js","observatory-sky.webp","constellation-star.png","libre-caslon-display.woff2","dm-sans.woff2","icon-telescope.svg"]) {
+    assert.ok(readFileSync(join(appDir, asset)).length, `missing packaged board asset ${asset}`);
+  }
   assert.equal(logo.subarray(1, 4).toString("ascii"), "PNG");
 });
 
@@ -449,11 +425,11 @@ test("serves global local board settings with defensive normalization", async ()
 test("parses CLI options", () => {
   assert.equal(parseArgs(["--goal", "docs/goals/demo"]).port, 41737);
   assert.equal(parseArgs(["--goal", "docs/goals/demo"]).host, "127.0.0.1");
-  assert.equal(parseArgs(["--goal", "docs/goals/demo"]).publicHost, "goalbuddy.localhost");
+  assert.equal(parseArgs(["--goal", "docs/goals/demo"]).publicHost, "thegoalbuddy.localhost");
   assert.deepEqual(parseArgs(["--goal", "docs/goals/demo", "--port", "0", "--once", "--json"]), {
     goal: "docs/goals/demo",
     host: "127.0.0.1",
-    publicHost: "goalbuddy.localhost",
+    publicHost: "thegoalbuddy.localhost",
     port: 0,
     once: true,
     json: true,
@@ -468,7 +444,7 @@ test("parses CLI options", () => {
   });
 });
 
-test("advertises goalbuddy.localhost while binding to loopback", async () => {
+test("advertises thegoalbuddy.localhost while binding to loopback", async () => {
   const root = mkdtempSync(join(tmpdir(), "goalbuddy-local-board-public-host-"));
   const goalDir = join(root, "goal");
   try {
@@ -478,7 +454,7 @@ test("advertises goalbuddy.localhost while binding to loopback", async () => {
     const server = await startBoardServer({ goalDir, port: 0 });
     try {
       const url = new URL(server.url);
-      assert.equal(url.hostname, "goalbuddy.localhost");
+      assert.equal(url.hostname, "thegoalbuddy.localhost");
       assert.equal(url.pathname, "/public-host-goal/");
 
       const loopbackResponse = await fetch(`http://127.0.0.1:${url.port}/api/boards`);
@@ -496,6 +472,7 @@ test("runs when installed under a symlinked temp path", () => {
   try {
     cpSync("goalbuddy/surfaces/local-goal-board/scripts", join(root, "scripts"), { recursive: true });
     cpSync("goalbuddy/surfaces/local-goal-board/assets", join(root, "assets"), { recursive: true });
+    cpSync("goalbuddy/surfaces/local-goal-board/ui", join(root, "ui"), { recursive: true });
 
     const result = spawnSync(process.execPath, [
       join(root, "scripts", "local-goal-board.mjs"),
@@ -719,7 +696,7 @@ test("unregistered board paths explain hub reuse instead of stale-port cleanup",
       assert.match(message, /board path is not registered/i);
       assert.match(message, /multi-board hub/i);
       assert.match(message, /Do not stop it just because a \/<slug>\/ board URL returned 404/);
-      assert.match(message, /npx goalbuddy board <goal-dir>/);
+      assert.match(message, /npx thegoalbuddy board <goal-dir>/);
       assert.match(message, /First Goal/);
       assert.match(message, /\/api\/boards/);
     } finally {

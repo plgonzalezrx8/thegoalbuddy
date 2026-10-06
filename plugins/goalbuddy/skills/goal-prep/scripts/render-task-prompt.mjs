@@ -103,7 +103,7 @@ export function loadBoard(boardPath) {
   if (!existsSync(boardPath)) throw new Error(`state file not found: ${boardPath}`);
   const document = parseGoalStateText(readFileSync(boardPath, "utf8"));
   if (!document || Number(document.version) !== 2) {
-    throw new Error(`unsupported GoalBuddy state version in ${boardPath}: expected top-level "version: 2". Start from templates/state.yaml bundled with the goal-prep skill.`);
+    throw new Error(`unsupported thegoalbuddy state version in ${boardPath}: expected top-level "version: 2". Start from templates/state.yaml bundled with the goal-prep skill.`);
   }
   if (!Array.isArray(document.tasks)) throw new Error(`state file has no tasks: ${boardPath}`);
   return {
@@ -282,7 +282,7 @@ function receiptSchema(role) {
 
 export function formatPrompt(payload, { includePmObservationContract = true } = {}) {
   const lines = [
-    "GoalBuddy task prompt",
+    "thegoalbuddy task prompt",
     "",
     "Metadata:",
     `- recommended_agent: ${payload.metadata.recommended_agent}`,
@@ -313,8 +313,8 @@ export function formatPrompt(payload, { includePmObservationContract = true } = 
     "Spawn contract:",
     `- Codex spawn_agent agent_type: ${payload.metadata.required_spawn_agent_type || "do not spawn; run as PM"}`,
     `- Claude Code Agent tool subagent_type: ${payload.metadata.required_claude_subagent_type || "do not spawn; run as PM"}`,
-    "- Do not substitute generic scout, worker, judge, Explore, or general-purpose agents for GoalBuddy agents.",
-    "- If the required GoalBuddy agent is unavailable, stop spawning and continue as PM fallback or install agents.",
+    "- Do not substitute generic scout, worker, judge, Explore, or general-purpose agents for thegoalbuddy agents.",
+    "- If the required thegoalbuddy agent is unavailable, stop spawning and continue as PM fallback or install agents.",
   );
   if (includePmObservationContract) {
     lines.push(

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" role="img" aria-labelledby="title desc">
-  <title id="title">GoalBuddy logo</title>
-  <desc id="desc">GoalBuddy wordmark with lavender cloud mark.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 190" role="img" aria-labelledby="title desc">
+  <title id="title">thegoalbuddy logo</title>
+  <desc id="desc">thegoalbuddy wordmark with lavender cloud mark.</desc>
   <defs>
     <radialGradient id="logoMarkGrad" cx="34%" cy="18%" r="92%">
       <stop offset="0" stop-color="#f8f2ff"/>
@@ -17,5 +17,5 @@
     <ellipse cx="132" cy="81" rx="8" ry="12" fill="#061238"/>
     <path d="M99 101c8 9 18 9 27 0" fill="none" stroke="#061238" stroke-width="7" stroke-linecap="round"/>
   </g>
-  <text x="230" y="116" fill="#071236" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="-1">GoalBuddy</text>
+  <text x="230" y="116" fill="#071236" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="-1">thegoalbuddy</text>
 </svg>

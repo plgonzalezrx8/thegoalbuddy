@@ -82,9 +82,9 @@ function emit(result, code) {
   if (json) {
     console.log(JSON.stringify(result, null, 2));
   } else if (result.can_stop) {
-    console.log(`GoalBuddy can stop: ${result.reason}.`);
+    console.log(`thegoalbuddy can stop: ${result.reason}.`);
   } else {
-    console.error(`GoalBuddy cannot stop: ${result.reason}.`);
+    console.error(`thegoalbuddy cannot stop: ${result.reason}.`);
     if (result.next) console.error(result.next);
     for (const error of result.errors || []) console.error(`- ${error}`);
   }

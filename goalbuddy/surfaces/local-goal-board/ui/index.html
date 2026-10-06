@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>thegoalbuddy · Observatory</title>
+    <link rel="icon" href="./constellation-star.png" type="image/png" />
+    <link
+      rel="preload"
+      href="./libre-caslon-display.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#goal-title">Skip to goal</a>
+    <header class="topbar">
+      <div class="topbar-primary">
+        <a class="brand" href="./" aria-label="thegoalbuddy home"
+          >thegoalbuddy</a
+        >
+        <nav
+          class="board-switcher is-empty"
+          aria-label="Local thegoalbuddy boards"
+        >
+          <label for="board-switcher" class="visually-hidden">Board</label>
+          <select id="board-switcher" aria-label="Switch local board"></select>
+        </nav>
+      </div>
+      <div class="header-tools">
+        <a
+          class="github-stars"
+          href="https://github.com/plgonzalezrx8/thegoalbuddy"
+          target="_blank"
+          rel="noreferrer"
+          >GitHub</a
+        >
+        <div class="settings-wrap">
+          <button
+            class="settings-button"
+            id="settings-button"
+            type="button"
+            aria-label="Board settings"
+            aria-expanded="false"
+            aria-controls="settings-popover"
+          >
+            <img
+              class="icon"
+              src="./icon-adjustments-horizontal.svg"
+              alt=""
+            /><span>Settings</span>
+          </button>
+          <section
+            class="settings-popover"
+            id="settings-popover"
+            aria-label="Local board settings"
+            hidden
+          >
+            <p class="eyebrow">Observatory preferences</p>
+            <h2>Make yourself at home.</h2>
+            <div class="setting-row">
+              <label for="setting-theme">Theme</label
+              ><select id="setting-theme" data-setting="theme">
+                <option value="system">Observatory</option>
+                <option value="light">Daylight</option>
+                <option value="dark">Night sky</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="setting-density">Density</label
+              ><select id="setting-density" data-setting="density">
+                <option value="comfortable">Comfortable</option>
+                <option value="compact">Compact</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="setting-completed">Completed tasks</label
+              ><select
+                id="setting-completed"
+                data-setting="completedVisibility"
+              >
+                <option value="show">Show</option>
+                <option value="collapse">Collapse</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="setting-board-open">Open boards</label
+              ><select id="setting-board-open" data-setting="boardOpenBehavior">
+                <option value="last">Last viewed</option>
+                <option value="newest">Newest active</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="setting-motion">Motion</label
+              ><select id="setting-motion" data-setting="motion">
+                <option value="system">Follow system</option>
+                <option value="reduce">Reduce</option>
+                <option value="allow">Allow</option>
+              </select>
+            </div>
+            <button type="button" class="text-button" id="settings-close">
+              Close settings
+            </button>
+          </section>
+        </div>
+      </div>
+    </header>
+    <main class="shell">
+      <div class="observation-line">
+        <span class="eyebrow">Local goal viewer</span
+        ><span class="connection"
+          ><span id="live-dot" class="live-dot" aria-hidden="true"></span
+          ><span id="live-state" role="status">Connecting</span></span
+        >
+      </div>
+      <div class="snapshot-line">
+        <time id="goal-updated">Reading local state…</time
+        ><span id="timezone"></span>
+      </div>
+      <section class="observatory" aria-label="Goal observatory">
+        <section class="goal-header" aria-labelledby="goal-title">
+          <p class="eyebrow">Goal</p>
+          <h1 id="goal-title" tabindex="-1">Finding your next star.</h1>
+          <div class="completion">
+            <p class="eyebrow">Completion criteria</p>
+            <p id="goal-criteria">Waiting for local state.</p>
+          </div>
+          <p class="goal-tranche" id="goal-tranche"></p>
+          <div class="goal-context">
+            <span id="goal-status">Unknown</span
+            ><span id="goal-executor">Agent activity not confirmed</span>
+          </div>
+          <p id="verification-status" class="verification-status"></p>
+        </section>
+        <section class="constellation-area" aria-label="Task constellation">
+          <div class="map-controls">
+            <span id="sector-label" class="eyebrow"></span>
+            <div class="sector-nav" id="sector-nav" hidden>
+              <button
+                type="button"
+                id="sector-prev"
+                aria-label="Previous constellation"
+              >
+                Previous</button
+              ><button
+                type="button"
+                id="sector-next"
+                aria-label="Next constellation"
+              >
+                Next
+              </button>
+            </div>
+            <button
+              type="button"
+              id="view-toggle"
+              class="text-button"
+              aria-pressed="false"
+            >
+              Task list
+            </button>
+          </div>
+          <div class="constellation" id="board">
+            <p class="loading-state">Reading the stars…</p>
+          </div>
+          <p class="sequence-note" id="sequence-note">
+            Task sequence · stars show recorded state
+          </p>
+        </section>
+      </section>
+      <section
+        class="focus-dock"
+        id="focus-dock"
+        aria-label="Current work and next action"
+      ></section>
+      <div
+        class="board-status"
+        id="board-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+      <footer class="board-footer">
+        <span>Local files. Clear intent. Proof of progress.</span
+        ><button type="button" class="text-button" id="help-button">
+          How to continue
+        </button>
+      </footer>
+    </main>
+    <dialog class="modal" id="task-modal" aria-labelledby="modal-title">
+      <article class="modal-panel">
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow" id="modal-kicker">Task</p>
+            <h2 id="modal-title">Task detail</h2>
+          </div>
+          <button
+            class="icon-button"
+            type="button"
+            data-close-modal
+            aria-label="Close task detail"
+          >
+            <img class="icon" src="./icon-x.svg" alt="" />
+          </button>
+        </header>
+        <div class="modal-body" id="modal-body"></div>
+      </article>
+    </dialog>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

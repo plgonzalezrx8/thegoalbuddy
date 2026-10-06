@@ -34,21 +34,21 @@ test("Goal Prep invocation boundary keeps $goal-prep prepare-only", () => {
     assert.match(text, /During a `\$goal-prep` turn, do not perform the user's requested work/);
     assert.match(text, /Do not refresh or load named skills/);
     assert.match(text, /Do not load that skill, browse that repo, or generate those assets during `\$goal-prep`/);
-    assert.match(text, /check whether GoalBuddy itself is stale/);
-    assert.match(text, /GoalBuddy <latest_version> is available/);
+    assert.match(text, /check whether thegoalbuddy itself is stale/);
+    assert.match(text, /thegoalbuddy <latest_version> is available/);
     assert.match(text, /Intent -> Oracle -> Surface -> Loop -> Proof/);
     assert.match(text, /No oracle, no serious goal/);
-    assert.match(text, /Do you want the local GoalBuddy board for this goal\?/);
-    assert.match(text, /Use the local GoalBuddy board as the default work surface/);
+    assert.match(text, /Do you want the local thegoalbuddy board for this goal\?/);
+    assert.match(text, /Use the local thegoalbuddy board as the default work surface/);
     assert.match(text, /start the local board before filling the task list/);
     assert.match(text, /node <skill-path>\/surfaces\/local-goal-board\/scripts\/local-goal-board\.mjs --goal docs\/goals\/<slug>/);
     assert.match(text, /do not assume the existing process is stale and do not stop it/);
     assert.match(text, /First check `http:\/\/127\.0\.0\.1:41737\/api\/boards`/);
     assert.match(text, /shared multi-board hub/);
-    assert.match(text, /update through the channel that installed GoalBuddy/);
-    assert.match(text, /run the GoalBuddy CLI through the user's install channel/);
+    assert.match(text, /update through the channel that installed thegoalbuddy/);
+    assert.match(text, /run the thegoalbuddy CLI through the user's install channel/);
     assert.match(text, /Codex in-app Browser/);
-    assert.match(text, /do not install a GoalBuddy catalog item/);
+    assert.match(text, /do not install a thegoalbuddy catalog item/);
     assert.match(text, /A good task is the largest safe useful slice/);
     assert.match(text, /Safe does not mean small/);
     assert.match(text, /references\/goal-execution\.md/);
@@ -57,7 +57,7 @@ test("Goal Prep invocation boundary keeps $goal-prep prepare-only", () => {
     assert.match(text, /Always start `state\.yaml` from `templates\/state\.yaml`/);
     assert.match(text, /scan environment reality before seeding/);
     assert.match(text, /Claude Code `goal-\*\.md` files/);
-    assert.match(text, /`unknown` \| Agent availability could not be checked\. \| `\/goal` must attempt the exact harness-specific GoalBuddy agent once/);
+    assert.match(text, /`unknown` \| Agent availability could not be checked\. \| `\/goal` must attempt the exact harness-specific thegoalbuddy agent once/);
   }
 });
 
@@ -78,7 +78,7 @@ test("the execution contract carries the harness-specific runtime rules", () => 
     assert.match(text, /node <skill-path>\/scripts\/check-can-stop\.mjs docs\/goals\/<slug>/);
     assert.match(text, /stop_allowed/);
     assert.match(text, /continuation_required/);
-    assert.match(text, /Repair only GoalBuddy control files/);
+    assert.match(text, /Repair only thegoalbuddy control files/);
     assert.match(text, /Never edit product implementation files during board-health work/);
     assert.match(text, /goalbuddy_receipt_v1/);
     assert.match(text, /full_outcome_complete: true/);

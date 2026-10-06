@@ -1,11 +1,11 @@
 {
-  "name": "goalbuddy",
+  "name": "thegoalbuddy",
   "interface": {
-    "displayName": "GoalBuddy"
+    "displayName": "thegoalbuddy"
   },
   "plugins": [
     {
-      "name": "goalbuddy",
+      "name": "thegoalbuddy",
       "source": {
         "source": "local",
         "path": "./plugins/goalbuddy"

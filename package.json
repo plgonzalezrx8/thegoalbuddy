@@ -1,9 +1,10 @@
 {
-  "name": "goalbuddy",
-  "version": "0.4.3",
+  "name": "thegoalbuddy",
+  "version": "0.5.0",
   "description": "A goal operating loop for Codex and Claude Code: goal oracles, local boards, receipts, and verification.",
   "type": "module",
   "bin": {
+    "thegoalbuddy": "internal/cli/goal-maker.mjs",
     "goalbuddy": "internal/cli/goal-maker.mjs",
     "goal-maker": "internal/cli/goal-maker.mjs"
   },
@@ -14,25 +15,31 @@
     "README.md",
     "CONTRIBUTING.md",
     "docs/releases",
+    "docs/spec",
     "plugins/goalbuddy",
     "internal/assets",
     "internal/cli",
     "goalbuddy"
   ],
   "scripts": {
-    "check": "node --check internal/cli/*.mjs goalbuddy/scripts/*.mjs goalbuddy/surfaces/local-goal-board/scripts/*.mjs goalbuddy/surfaces/local-goal-board/scripts/lib/*.mjs && node --test internal/test/*.test.mjs goalbuddy/surfaces/local-goal-board/test/*.test.mjs",
+    "check": "npm run check:syntax && node --test internal/test/*.test.mjs goalbuddy/surfaces/local-goal-board/test/*.test.mjs",
+    "check:syntax": "node internal/cli/check-syntax.mjs",
     "test": "node --test internal/test/*.test.mjs goalbuddy/surfaces/local-goal-board/test/*.test.mjs",
     "pack:dry-run": "npm pack --dry-run",
     "sync:plugin": "node internal/cli/sync-skill-tree.mjs --write",
     "postinstall": "node internal/cli/postinstall.mjs",
-    "publish:check": "node internal/cli/check-publish-version.mjs && npm run pack:dry-run",
-    "prepublishOnly": "node internal/cli/check-publish-version.mjs"
+    "publish:identity": "node internal/cli/check-publish-identity.mjs",
+    "publish:check": "node internal/cli/publish-preflight.mjs",
+    "prepublishOnly": "node internal/cli/publish-preflight.mjs",
+    "publish:status": "node internal/cli/check-publish-status.mjs",
+    "pack:check": "node internal/cli/check-package.mjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tolimarchuk/goalbuddy.git"
+    "url": "git+https://github.com/plgonzalezrx8/thegoalbuddy.git"
   },
   "keywords": [
+    "thegoalbuddy",
     "codex",
     "codex-skill",
     "openai-codex",
@@ -51,16 +58,23 @@
     "agent",
     "verification"
   ],
-  "author": "tolimarchuk",
+  "author": "plgonzalezrx8",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tolimarchuk/goalbuddy/issues"
+    "url": "https://github.com/plgonzalezrx8/thegoalbuddy/issues"
   },
-  "homepage": "https://github.com/tolimarchuk/goalbuddy#readme",
+  "homepage": "https://github.com/plgonzalezrx8/thegoalbuddy#readme",
   "engines": {
     "node": ">=18"
   },
   "publishConfig": {
-    "access": "public"
-  }
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "contributors": [
+    {
+      "name": "tolimarchuk",
+      "url": "https://github.com/tolimarchuk"
+    }
+  ]
 }

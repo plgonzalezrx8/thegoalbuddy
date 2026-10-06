@@ -1,16 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "goalbuddy",
+  "name": "thegoalbuddy",
   "owner": {
-    "name": "tolimarchuk",
-    "email": "support@tolibear.com"
+    "name": "plgonzalezrx8"
   },
-  "description": "GoalBuddy /goal-prep skill plus Scout/Judge/Worker subagents for pressured /goal runs.",
+  "description": "thegoalbuddy /goal-prep skill plus Scout/Judge/Worker subagents for pressured /goal runs.",
   "plugins": [
     {
-      "name": "goalbuddy",
+      "name": "thegoalbuddy",
       "source": "./plugins/goalbuddy",
-      "description": "GoalBuddy: turn broad work into pressured /goal runs with oracles, local boards, receipts, and verification."
+      "description": "thegoalbuddy: turn broad work into pressured /goal runs with oracles, local boards, receipts, and verification."
     }
   ]
 }

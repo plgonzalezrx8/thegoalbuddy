@@ -22,7 +22,7 @@ test("release history stays in one running changelog", () => {
     "0.2.22", "0.2.21", "0.2.20", "0.2.19", "0.2.18", "0.2.17", "0.2.16",
     "0.2.15", "0.2.14", "0.2.13", "0.2.12", "0.2.11", "0.2.10",
   ]) {
-    assert.match(changelog, new RegExp(`^## ${version}:`, "m"), `missing GoalBuddy ${version}`);
+    assert.match(changelog, new RegExp(`^## ${version}:`, "m"), `missing thegoalbuddy ${version}`);
   }
 
   assert.match(changelog, /^## Goal Maker Package History$/m);
@@ -49,6 +49,7 @@ test("packed canonical and plugin skill trees stay complete and aligned", () => 
   const pluginFiles = relativePackedFiles(files, pluginPrefix);
 
   assert.ok(files.includes("goalbuddy/references/goal-execution.md"));
+  assert.ok(files.includes("docs/spec/receipt-v1.md"), "packed README receipt specification must resolve");
   assert.ok(canonicalFiles.includes("SKILL.md"));
   assert.ok(canonicalFiles.includes("scripts/render-task-prompt.mjs"));
   assert.deepEqual(canonicalFiles, pluginFiles);
@@ -72,7 +73,7 @@ test("the packed npm artifact installs the Claude contract and role agents", () 
     ]);
     assert.equal(install.status, 0, install.stderr || install.stdout);
 
-    const extractedRoot = join(packageRoot, "node_modules", "goalbuddy");
+    const extractedRoot = join(packageRoot, "node_modules", "thegoalbuddy");
     const claudeHome = join(root, "claude-home");
     const cli = spawnSync(process.execPath, [
       join(extractedRoot, "internal", "cli", "goal-maker.mjs"),

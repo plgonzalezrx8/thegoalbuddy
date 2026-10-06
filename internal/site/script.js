@@ -1,44 +1,11 @@
-if (window.lucide) {
-  window.lucide.createIcons();
-}
-
-// Scroll-reveal entrance animations. Elements are pre-hidden via the `.js-anim`
-// class (set in <head>); reveal them as they enter the viewport.
-const revealEls = document.querySelectorAll("[data-animate], [data-stagger]");
-if (revealEls.length) {
-  if ("IntersectionObserver" in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
-    );
-    revealEls.forEach((el) => revealObserver.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add("is-visible"));
-  }
-}
-
-const toast = document.createElement("div");
-toast.className = "copy-toast";
-toast.setAttribute("role", "status");
-toast.setAttribute("aria-live", "polite");
-document.body.append(toast);
-
+const toast = document.querySelector(".copy-toast");
 let toastTimer;
 
-function showToast(message) {
+function announce(message) {
   toast.textContent = message;
   toast.classList.add("is-visible");
-  window.clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 1700);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 3500);
 }
 
 async function copyText(value) {
@@ -46,7 +13,7 @@ async function copyText(value) {
     await navigator.clipboard.writeText(value);
     return;
   }
-
+  const previousFocus = document.activeElement;
   const field = document.createElement("textarea");
   field.value = value;
   field.setAttribute("readonly", "");
@@ -54,63 +21,31 @@ async function copyText(value) {
   field.style.opacity = "0";
   document.body.append(field);
   field.select();
-  const copied = document.execCommand("copy");
-  field.remove();
-  if (!copied) throw new Error("Copy command failed");
+  try {
+    if (!document.execCommand("copy")) throw new Error("Clipboard unavailable");
+  } finally {
+    field.remove();
+    previousFocus?.focus({ preventScroll: true });
+  }
 }
 
-document.querySelectorAll("[data-copy]").forEach((button) => {
-  button.addEventListener("click", async (event) => {
-    event.preventDefault();
-
-    const value = button.getAttribute("data-copy");
+for (const button of document.querySelectorAll("[data-copy]")) {
+  button.addEventListener("click", async () => {
+    if (button.disabled) return;
+    button.disabled = true;
     const label = button.querySelector("span");
-    const original = label ? label.textContent : "";
-    const toastMessage = button.getAttribute("data-copy-toast") || `Copied ${value}`;
-
     try {
-      await copyText(value);
-      showToast(toastMessage);
-      if (button.classList.contains("copy-command") && label) {
-        label.textContent = "Copied";
-        window.setTimeout(() => {
-          label.textContent = original;
-        }, 1400);
-      }
+      await copyText(button.dataset.copy);
+      announce("Command copied. Paste it into your repository terminal.");
+      label.textContent = "Copied";
     } catch {
-      showToast("Copy failed");
-      if (button.classList.contains("copy-command") && label) {
-        label.textContent = "Select";
-        window.setTimeout(() => {
-          label.textContent = original;
-        }, 1400);
-      }
+      announce("Could not copy. Select the command text and copy it manually.");
+      label.textContent = "Select text";
+    } finally {
+      button.disabled = false;
+      setTimeout(() => {
+        label.textContent = "Copy";
+      }, 2500);
     }
   });
-});
-
-const starCount = document.querySelector("[data-github-stars]");
-
-function formatStars(count) {
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k`;
-  }
-  return String(count);
 }
-
-async function loadGithubStars() {
-  if (!starCount) return;
-
-  try {
-    const response = await fetch("https://api.github.com/repos/tolimarchuk/goalbuddy", {
-      headers: { Accept: "application/vnd.github+json" },
-    });
-    if (!response.ok) throw new Error("GitHub API unavailable");
-    const repo = await response.json();
-    starCount.textContent = `${formatStars(repo.stargazers_count)} stars`;
-  } catch {
-    starCount.textContent = "GitHub";
-  }
-}
-
-loadGithubStars();

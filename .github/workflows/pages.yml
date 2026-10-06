@@ -1,4 +1,4 @@
-name: Deploy GoalBuddy site
+name: Deploy thegoalbuddy site
 
 on:
   push:

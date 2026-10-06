@@ -1,20 +1,20 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { detectUpdateCommand, findInstalledVersion } from "./install-channel.mjs";
 
-const packageName = "goalbuddy";
+const packageName = "thegoalbuddy";
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 
 const report = {
   package: packageName,
-  current_version: findCurrentVersion(),
+  current_version: normalizeVersion(findInstalledVersion(scriptDir)),
   latest_version: null,
   update_available: false,
   check_status: "unknown",
-  update_command: detectUpdateCommand(),
+  update_command: detectUpdateCommand(scriptDir),
 };
 
 try {
@@ -29,28 +29,12 @@ try {
 if (args.includes("--json")) {
   console.log(JSON.stringify(report, null, 2));
 } else if (report.check_status !== "ok") {
-  console.log(`GoalBuddy update check unavailable: ${report.error}`);
+  console.log(`thegoalbuddy update check unavailable: ${report.error}`);
 } else if (report.update_available) {
-  console.log(`GoalBuddy ${report.latest_version} is available; installed version is ${report.current_version}.`);
+  console.log(`thegoalbuddy ${report.latest_version} is available; installed version is ${report.current_version}.`);
   console.log(`Update with: ${report.update_command}`);
 } else {
-  console.log(`GoalBuddy is up to date (${report.current_version}).`);
-}
-
-function findCurrentVersion() {
-  const candidates = [
-    join(scriptDir, "..", ".goalbuddy-install.json"),
-    join(scriptDir, "..", "..", "..", ".codex-plugin", "plugin.json"),
-    join(scriptDir, "..", "..", "package.json"),
-  ];
-
-  for (const path of candidates) {
-    const data = readJson(path);
-    const version = data?.package_version || data?.version;
-    if (version) return normalizeVersion(version);
-  }
-
-  return "0.0.0";
+  console.log(`thegoalbuddy is up to date (${report.current_version}).`);
 }
 
 function latestPublishedVersion() {
@@ -76,32 +60,6 @@ function latestPublishedVersion() {
   }
 
   return normalizeVersion(result.stdout);
-}
-
-function detectUpdateCommand() {
-  if (process.env.GOALBUDDY_TEST_UPDATE_COMMAND) return process.env.GOALBUDDY_TEST_UPDATE_COMMAND;
-  if (process.env.CLAUDE_PLUGIN_ROOT || normalizedPath(scriptDir).includes("/.claude/")) return "/plugin update goalbuddy@goalbuddy";
-
-  const userAgent = process.env.npm_config_user_agent || "";
-  if (/^pnpm\//.test(userAgent)) return "pnpm update -g goalbuddy";
-  if (/^bun\//.test(userAgent)) return "bun update -g goalbuddy";
-  if (process.env.MISE_EXE || process.env.MISE_SHELL || process.env.MISE_PROJECT_ROOT) return "mise upgrade npm:goalbuddy";
-  if (/^npm\//.test(userAgent)) return "npx goalbuddy@latest";
-
-  return "use the install channel that installed GoalBuddy";
-}
-
-function normalizedPath(path) {
-  return String(path).replace(/\\/g, "/");
-}
-
-function readJson(path) {
-  if (!existsSync(path)) return null;
-  try {
-    return JSON.parse(readFileSync(path, "utf8"));
-  } catch {
-    return null;
-  }
 }
 
 function normalizeVersion(value) {

@@ -1,16 +1,16 @@
 {
-  "name": "goalbuddy",
-  "version": "0.4.3",
+  "name": "thegoalbuddy",
+  "version": "0.5.0",
   "description": "Turn broad Codex and Claude Code work into pressured goal runs with oracles, local boards, receipts, and verification.",
   "author": {
-    "name": "tolimarchuk",
-    "email": "support@tolibear.com",
-    "url": "https://github.com/tolimarchuk"
+    "name": "plgonzalezrx8",
+    "url": "https://github.com/plgonzalezrx8"
   },
-  "homepage": "https://github.com/tolimarchuk/goalbuddy#readme",
-  "repository": "https://github.com/tolimarchuk/goalbuddy",
+  "homepage": "https://github.com/plgonzalezrx8/thegoalbuddy#readme",
+  "repository": "https://github.com/plgonzalezrx8/thegoalbuddy",
   "license": "MIT",
   "keywords": [
+    "thegoalbuddy",
     "goalbuddy",
     "codex",
     "claude-code",
@@ -22,25 +22,25 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "GoalBuddy",
+    "displayName": "thegoalbuddy",
     "shortDescription": "Goal oracles, local boards, receipts, and proof loops for /goal",
-    "longDescription": "GoalBuddy packages a structured goal workflow for broad, long-running, or ambiguous engineering work in Codex or Claude Code. It creates durable goal charters, goal oracles, task boards, optional depth-1 subgoals, local board surfaces, parallel-agent-ready handoffs, receipts, verification gates, and compatibility guidance for teams moving from goal-maker.",
-    "developerName": "tolimarchuk",
+    "longDescription": "thegoalbuddy packages a structured goal workflow for broad, long-running, or ambiguous engineering work in Codex or Claude Code. It creates durable goal charters, goal oracles, task boards, optional depth-1 subgoals, local board surfaces, parallel-agent-ready handoffs, receipts, verification gates, and compatibility guidance for teams moving from goal-maker.",
+    "developerName": "plgonzalezrx8",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/tolimarchuk/goalbuddy",
-    "privacyPolicyURL": "https://github.com/tolimarchuk/goalbuddy#privacy",
-    "termsOfServiceURL": "https://github.com/tolimarchuk/goalbuddy#license",
+    "websiteURL": "https://github.com/plgonzalezrx8/thegoalbuddy",
+    "privacyPolicyURL": "https://github.com/plgonzalezrx8/thegoalbuddy#privacy",
+    "termsOfServiceURL": "https://github.com/plgonzalezrx8/thegoalbuddy#license",
     "defaultPrompt": [
-      "$goal-prep prepare a GoalBuddy board for this goal"
+      "$goal-prep prepare a thegoalbuddy board for this goal"
     ],
-    "brandColor": "#2563EB",
-    "composerIcon": "./assets/goalbuddy-icon.svg",
-    "logo": "./assets/goalbuddy-icon.svg",
+    "brandColor": "#94d5ff",
+    "composerIcon": "./assets/constellation-star.png",
+    "logo": "./assets/constellation-star.png",
     "screenshots": []
   }
 }

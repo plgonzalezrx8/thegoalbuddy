@@ -1,368 +1,360 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Goal Buddy - A /goal operating system for long runs</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#040d15" />
+    <title>thegoalbuddy · Keep your goal in sight</title>
     <meta
       name="description"
-      content="Goal Buddy prepares goal.md and state.yaml for long /goal runs, then keeps pressure on the goal with a local board, receipts, and proof."
-    >
-    <link rel="canonical" href="https://goalbuddy.dev/">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://goalbuddy.dev/">
-    <meta property="og:title" content="Goal Buddy - A /goal operating system for long runs">
-    <meta property="og:description" content="Prepare goal.md for long /goal runs, keep state.yaml authoritative, and finish only when receipts prove the outcome.">
-    <meta property="og:image" content="https://goalbuddy.dev/assets/goalbuddy-og-share.png">
-    <meta property="og:image:secure_url" content="https://goalbuddy.dev/assets/goalbuddy-og-share.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Goal Buddy social card showing a terminal preview and mascot.">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Goal Buddy - A /goal operating system for long runs">
-    <meta name="twitter:description" content="Prepare goal.md for long /goal runs, keep state.yaml authoritative, and finish only when receipts prove the outcome.">
-    <meta name="twitter:image" content="https://goalbuddy.dev/assets/goalbuddy-og-share.png">
-    <meta name="twitter:image:alt" content="Goal Buddy social card showing a terminal preview and mascot.">
-    <link rel="icon" href="./assets/goalbuddy-mark.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=20260618-social-proof">
-    <script>
-      if (!window.matchMedia || !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.documentElement.classList.add("js-anim");
-      }
-    </script>
+      content="A local observatory for long coding runs. See active work, decisions, and evidence while Codex or Claude Code works from files in your repository."
+    />
+    <link
+      rel="canonical"
+      href="https://plgonzalezrx8.github.io/thegoalbuddy/"
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="thegoalbuddy · Keep your goal in sight"
+    />
+    <meta
+      property="og:description"
+      content="Your destination, current work, and proof of progress. A local goal viewer for Codex and Claude Code."
+    />
+    <meta
+      property="og:url"
+      content="https://plgonzalezrx8.github.io/thegoalbuddy/"
+    />
+    <meta
+      property="og:image"
+      content="https://plgonzalezrx8.github.io/thegoalbuddy/assets/goalbuddy-og-share.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="thegoalbuddy observatory sky, constellation star, and the words Keep your goal in sight."
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="thegoalbuddy · Keep your goal in sight"
+    />
+    <meta
+      name="twitter:description"
+      content="Your destination, current work, and proof of progress. A local goal viewer for Codex and Claude Code."
+    />
+    <meta
+      name="twitter:image"
+      content="https://plgonzalezrx8.github.io/thegoalbuddy/assets/goalbuddy-og-share.png"
+    />
+    <link rel="icon" href="./assets/constellation-star.png" type="image/png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
   </head>
   <body>
-    <main class="site-shell" id="top">
-      <header class="site-header" data-animate="nav">
-        <a class="brand" href="#top" aria-label="Goal Buddy home">
-          <img src="./assets/goalbuddy-mark.png" alt="">
-          <span>Goal Buddy</span>
-        </a>
-        <nav class="nav-links" aria-label="Primary navigation">
-          <a href="#demo">Demo</a>
-          <a href="#workflow">Workflow</a>
-          <a href="#local">Local files</a>
-          <a href="#proof">Proof</a>
-          <a href="https://github.com/tolimarchuk/goalbuddy">GitHub</a>
-        </nav>
-        <div class="header-tools">
-          <a class="github-stars" href="https://github.com/tolimarchuk/goalbuddy" aria-label="Open Goal Buddy on GitHub">
-            <i data-lucide="star"></i>
-            <span data-github-stars>Stars</span>
-          </a>
-          <a class="header-action" href="#install" data-copy="npx goalbuddy" data-copy-toast="Copied npx goalbuddy">
-            <i data-lucide="terminal"></i>
-            <span>npx goalbuddy</span>
-          </a>
-        </div>
-      </header>
-
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy" data-stagger>
-          <p class="eyebrow">A /goal operating system for long runs</p>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="#top"
+        ><img
+          src="./assets/constellation-star.png"
+          alt=""
+          width="36"
+          height="36"
+        /><span>thegoalbuddy</span></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="#workflow">Start / Resume / Unblock</a
+        ><a href="#board">The board</a
+        ><a href="https://github.com/plgonzalezrx8/thegoalbuddy">GitHub</a>
+      </nav>
+      <a class="button compact" href="#start">Find your bearings</a>
+    </header>
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <p class="eyebrow">An observatory for your work</p>
           <h1 id="hero-title">
-            <span>Give /goal</span>
-            <span>a best friend.</span>
+            Keep your goal<br />
+            in sight.
           </h1>
-          <p class="hero-subcopy">
-            Goal Buddy prepares a goal.md for long /goal runs, keeps state.yaml as local truth, and pressures the work with a local board, receipts, and final proof.
+          <p class="hero-intro">
+            Long coding runs need a destination. Turn your goal into a local
+            constellation of tasks, decisions, and evidence — so you always know
+            where the work stands.
           </p>
-          <div class="hero-actions" aria-label="Goal Buddy actions">
-            <a class="button button-primary" href="#install" data-copy="npx goalbuddy" data-copy-toast="Copied npx goalbuddy">
-              <i data-lucide="terminal"></i>
-              <span>npx goalbuddy</span>
-            </a>
-            <a class="button button-secondary" href="https://github.com/tolimarchuk/goalbuddy">
-              <i data-lucide="github"></i>
-              View GitHub
-            </a>
+          <div class="hero-actions">
+            <a class="button primary" href="#start">Start a goal</a
+            ><a class="text-link" href="#board"
+              >Explore the board <span aria-hidden="true">↓</span></a
+            >
           </div>
-        </div>
-
-        <div class="hero-visual" data-animate>
-          <div class="command-window" aria-label="Goal Buddy terminal preview">
-            <div class="window-bar" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <pre><code><span>$</span>npx goalbuddy
-<span>$</span>$goal-prep            <em># Codex</em>
-<span>$</span>/goal-prep            <em># Claude Code</em>
-
-<em>Prepared docs/goals/improve-project/</em>
-  goal.md
-  state.yaml
-  notes/
-
-/goal follow goal.md</code></pre>
-          </div>
-          <img class="hero-character" src="./assets/goalbuddy-character.png" alt="Goal Buddy mascot holding a pencil">
-        </div>
-      </section>
-
-      <section class="social-proof" aria-label="Loved by teams at" data-animate>
-        <p>Loved by teams at</p>
-        <ul>
-          <li><img class="social-proof-logo social-proof-logo-openai" src="./assets/social-proof/openai.png" alt="OpenAI"></li>
-          <li><img class="social-proof-logo social-proof-logo-microsoft" src="./assets/social-proof/microsoft.png" alt="Microsoft"></li>
-          <li><img class="social-proof-logo social-proof-logo-shopify" src="./assets/social-proof/shopify.png" alt="Shopify"></li>
-          <li><img class="social-proof-logo social-proof-logo-zendesk" src="./assets/social-proof/zendesk.png" alt="Zendesk"></li>
-          <li><img class="social-proof-logo social-proof-logo-tencent" src="./assets/social-proof/tencent.png" alt="Tencent"></li>
-          <li><img class="social-proof-logo social-proof-logo-sentry" src="./assets/social-proof/sentry.png" alt="Sentry"></li>
-          <li><img class="social-proof-logo social-proof-logo-tripcom" src="./assets/social-proof/tripcom.png" alt="Trip.com"></li>
-        </ul>
-      </section>
-
-      <section class="principles" aria-label="Goal Buddy principles" data-stagger>
-        <article>
-          <i data-lucide="circle-dot"></i>
-          <h2>Compile the board</h2>
-          <p>Turn rough intent into a scoped goal.md, state.yaml, and starter /goal command.</p>
-        </article>
-        <article>
-          <i data-lucide="file-check-2"></i>
-          <h2>Keep one truth</h2>
-          <p>/goal reads and updates local state instead of relying on a hosted tracker.</p>
-        </article>
-        <article>
-          <i data-lucide="badge-check"></i>
-          <h2>Finish with proof</h2>
-          <p>Receipts map back to the original outcome before /goal can claim the work is complete.</p>
-        </article>
-      </section>
-
-      <section class="demo-section" id="demo" aria-labelledby="demo-title">
-        <div class="section-intro" data-animate>
-          <h2 id="demo-title">Watch the board appear while your AI agent keeps working.</h2>
-          <p>
-            GoalBuddy opens a local live board before the task list is finished, so the work becomes visible as Scout, Judge, and Worker tasks populate.
+          <p class="hero-note">
+            Your repository holds the plan. Codex or Claude Code does the work.
+            The board helps you see it.
           </p>
         </div>
-        <div class="demo-frame" aria-label="GoalBuddy local live board demo" data-animate>
-          <div class="demo-bar" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-            <strong>GoalBuddy live board</strong>
-          </div>
-          <video
-            controls
-            muted
-            playsinline
-            preload="metadata"
-            poster="./assets/goalbuddy-demo-poster.jpg"
+        <aside class="destination" aria-label="Product principles">
+          <p class="eyebrow">Destination</p>
+          <p class="destination-title">
+            Progress you can<br />find your way back to.
+          </p>
+          <span class="local-pill">Local files · No hosted tracker</span>
+        </aside>
+        <div class="hero-bottom">
+          <span>Local truth. Lasting direction.</span
+          ><a href="#workflow"
+            >01 / Find your bearings <span aria-hidden="true">↓</span></a
           >
-            <source src="./assets/goalbuddy-demo.mp4" type="video/mp4">
-          </video>
         </div>
       </section>
-
-      <section class="workflow" id="workflow" aria-labelledby="workflow-title">
-        <div class="section-kicker">Scout, Judge, Worker</div>
-        <div class="section-intro" data-animate>
-          <h2 id="workflow-title">A bounded loop for long /goal runs.</h2>
+      <section
+        class="workflow section-shell"
+        id="workflow"
+        aria-labelledby="workflow-title"
+      >
+        <div class="section-heading">
+          <p class="eyebrow">01 / Find your bearings</p>
+          <h2 id="workflow-title">Three ways to move forward.</h2>
           <p>
-            Goal Buddy separates mapping, decision, and implementation so /goal can continue from explicit state and keep checking the same finish line every turn.
+            You do not need to learn the internal roles to begin. Choose the
+            situation you are in.
           </p>
         </div>
-
-        <div class="workflow-showcase">
-          <div class="agent-spotlight" aria-label="Scout sub-agent" data-animate>
-            <img src="./assets/goalbuddy-agent-scout-alpha.png" alt="Scout sub-agent Goal Buddy with explorer gear">
-          </div>
-          <div class="agent-rail" data-stagger>
-            <article>
-              <div class="agent-icon"><i data-lucide="map"></i></div>
-              <span>Scout</span>
-              <h3>Map repo facts</h3>
-              <p>Capture file ownership, commands, constraints, risks, and unknowns before selecting implementation work.</p>
-            </article>
-            <article class="is-active">
-              <div class="agent-icon"><i data-lucide="scale"></i></div>
-              <span>Judge</span>
-              <h3>Choose the next slice</h3>
-              <p>Convert findings into one task with allowed files, stop conditions, and concrete acceptance checks.</p>
-            </article>
-            <article>
-              <div class="agent-icon"><i data-lucide="hammer"></i></div>
-              <span>Worker</span>
-              <h3>Patch and receipt</h3>
-              <p>Implement the slice, record changed files and verification output, then hand updated state back to /goal.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="local-system" id="local" aria-labelledby="local-title">
-        <div class="local-copy" data-animate>
-          <div class="section-kicker">Local truth</div>
-          <h2 id="local-title">Repo files stay authoritative.</h2>
-          <p>
-            Goal Buddy writes the goal charter, machine-readable state, and notes into your repository. /goal can resume from those files, and the local board shows the same truth without replacing it.
-          </p>
-          <img class="local-character" src="./assets/goalbuddy-agent-judge-alpha.png" alt="Judge sub-agent Goal Buddy holding a verdict clipboard">
-        </div>
-
-        <div class="file-grid" data-stagger>
-          <article class="file-card file-goal">
-            <i data-lucide="file-text"></i>
-          <h3>goal.md</h3>
-            <p>Human-readable charter for /goal: intent, scope, acceptance criteria, and run instructions.</p>
-            <code># Goal Charter<br>/goal Follow docs/goals/&lt;slug&gt;/goal.md</code>
-          </article>
-          <article class="file-card file-state">
-            <i data-lucide="braces"></i>
-            <h3>state.yaml</h3>
-            <p>Structured board state for active agent, tasks, dependencies, receipts, and verification status.</p>
-            <code>version: 2<br>active_agent: judge</code>
-          </article>
-          <article class="file-card file-notes">
-            <i data-lucide="folder-open"></i>
-            <h3>notes/</h3>
-            <p>Longer Scout findings, Worker receipts, blocked-task notes, and command output summaries.</p>
-            <code>T003-worker-receipt.md</code>
-          </article>
-          <article class="file-card file-install" id="install">
-            <i data-lucide="copy"></i>
-            <h3>Install and prepare a board</h3>
-            <p>Run the CLI once, restart your agent, prepare the board, and start with the printed /goal command.</p>
-            <button class="copy-command" type="button" data-copy="npx goalbuddy">
-              <code>npx goalbuddy</code>
-              <span>Copy</span>
+        <div class="journey-grid">
+          <article class="journey-card" id="start">
+            <span class="step-number">01</span>
+            <h3>Start</h3>
+            <p>
+              Install from this checkout, restart your coding tool, then tell
+              Goal Prep what you want to achieve and how you will know it
+              worked.
+            </p>
+            <p class="command-label">In the repository terminal · Node 18+</p>
+            <button
+              type="button"
+              class="copy-command"
+              data-copy="node internal/cli/goal-maker.mjs"
+            >
+              <code>node internal/cli/goal-maker.mjs</code><span>Copy</span>
             </button>
+            <p class="command-label">
+              Installs both tools. Limit to one with
+              <code>--target codex</code> or <code>--target claude</code>.
+            </p>
+            <div class="tool-commands">
+              <div><span>Codex</span><code>$goal-prep</code></div>
+              <div><span>Claude Code</span><code>/goal-prep</code></div>
+            </div>
+            <p class="card-note">
+              Prep creates the goal files and prints the command to begin
+              execution. It does not start the work itself.
+            </p>
+          </article>
+          <article class="journey-card">
+            <span class="step-number">02</span>
+            <h3>Resume</h3>
+            <p>
+              Find your existing goal and its active task. Continue from the
+              same local files, even if you switch coding tools.
+            </p>
+            <p class="command-label">In the repository terminal</p>
+            <button
+              type="button"
+              class="copy-command"
+              data-copy="node internal/cli/goal-maker.mjs resume"
+            >
+              <code>node internal/cli/goal-maker.mjs resume</code
+              ><span>Copy</span>
+            </button>
+            <p>
+              Use the exact continuation command printed for your tool. The
+              goal's files carry the context forward.
+            </p>
+            <p class="card-note">
+              Codex uses native <code>/goal</code> when available. Claude Code
+              uses the installed <code>/goalbuddy</code> command.
+            </p>
+          </article>
+          <article class="journey-card attention">
+            <span class="step-number">03</span>
+            <h3>Unblock</h3>
+            <p>
+              Inspect the blocked task and read its reason, stop condition, and
+              receipt. Give the coding tool the missing decision, access, or
+              evidence.
+            </p>
+            <p class="instruction">
+              “Here is the answer to the blocked task: …”
+            </p>
+            <p>
+              Use the continuation command printed by Resume and add your
+              answer. The coding tool updates the goal state and continues from
+              the recorded next step.
+            </p>
+            <p class="card-note">
+              The browser is a viewer. It does not approve decisions, edit
+              tasks, or run your coding agent.
+            </p>
           </article>
         </div>
+        <p class="publication-note">
+          Fork preview: <code>thegoalbuddy</code> has not been published to npm
+          by this change. Use the checkout command above. The familiar
+          <code>npx thegoalbuddy</code> path is for a future published release.
+        </p>
+        <details class="setup-details">
+          <summary>Already using upstream GoalBuddy?</summary>
+          <p>
+            Disable the upstream <code>goalbuddy@goalbuddy</code> Codex plugin
+            before enabling <code>thegoalbuddy@thegoalbuddy</code>, to avoid
+            duplicate <code>$goal-prep</code> entries. Shared
+            <code>goal_*</code> agent files and compatibility CLI names overlap;
+            keep one package/plugin active in a home, or use separate homes. See
+            the
+            <a href="https://github.com/plgonzalezrx8/thegoalbuddy#start-here"
+              >README</a
+            >
+            for installation and migration details.
+          </p>
+        </details>
       </section>
-
-      <section class="sequence" aria-labelledby="sequence-title">
-        <div class="section-intro" data-animate>
-          <h2 id="sequence-title">State advances only after evidence.</h2>
-          <p>Each role writes enough information for the next role to continue, and verification gates completion claims.</p>
-        </div>
-        <ol class="sequence-list" data-stagger>
-          <li>
-            <i data-lucide="message-square"></i>
-            <span>Capture intent</span>
-          </li>
-          <li>
-            <i data-lucide="crosshair"></i>
-            <span>Set proof</span>
-          </li>
-          <li>
-            <i data-lucide="gavel"></i>
-            <span>Judge the slice</span>
-          </li>
-          <li>
-            <i data-lucide="wrench"></i>
-            <span>Worker patches</span>
-          </li>
-          <li>
-            <i data-lucide="badge-check"></i>
-            <span>Verify and update state</span>
-          </li>
-        </ol>
-      </section>
-
-      <section class="proof-system" id="proof" aria-labelledby="proof-title">
-        <div class="section-kicker">Goal pressure</div>
-        <div class="section-intro" data-animate>
-          <h2 id="proof-title">Finish only when the oracle says the outcome is real.</h2>
-          <p>GoalBuddy keeps the model small: one local board, one active task, one receipt trail, and a final audit that maps evidence back to the original owner outcome.</p>
-          <button class="copy-command proof-command proof-bulk-command" type="button" data-copy="npx goalbuddy board docs/goals/<slug>">
-            <code>npx goalbuddy board docs/goals/&lt;slug&gt;</code>
-            <span>Copy</span>
-          </button>
-        </div>
-        <div class="proof-grid" data-stagger>
-          <article>
-            <i data-lucide="crosshair"></i>
-            <h3>Goal oracle</h3>
-            <p>Record the observable signal that proves the original outcome, then keep testing each slice against it.</p>
-          </article>
-          <article>
-            <i data-lucide="layout-dashboard"></i>
-            <h3>Local surface</h3>
-            <p>Open the live board as tasks populate, without credentials or a hosted tracker.</p>
-          </article>
-          <article>
-            <i data-lucide="file-check-2"></i>
-            <h3>Receipts</h3>
-            <p>Every completed or blocked task leaves changed files, commands, evidence, and remaining blockers.</p>
-          </article>
-          <article>
-            <i data-lucide="badge-check"></i>
-            <h3>Final audit</h3>
-            <p>Completion requires a Judge or PM audit with full_outcome_complete: true.</p>
-          </article>
-          <article>
-            <i data-lucide="git-compare-arrows"></i>
-            <h3>Continuation</h3>
-            <p>If safe local work remains, /goal advances instead of stopping after the first passing slice.</p>
-          </article>
-          <article>
-            <i data-lucide="list-checks"></i>
-            <h3>Whole slices</h3>
-            <p>Judge chooses the largest safe useful slice, and Worker completes it before returning a receipt.</p>
-          </article>
-        </div>
-      </section>
-
-      <img class="final-character" src="./assets/goalbuddy-agent-worker-alpha.png" alt="Worker sub-agent Goal Buddy with a construction helmet" data-animate>
-
-      <section class="final-cta" aria-labelledby="cta-title" data-animate>
-        <div>
-          <h2 id="cta-title">Give /goal a board, receipts, and a proof loop.</h2>
-          <p>MIT licensed. Dependency-free runtime. Built around local goal.md and state.yaml files.</p>
-        </div>
-        <a class="button button-primary" href="#install" data-copy="npx goalbuddy" data-copy-toast="Copied npx goalbuddy">
-          <i data-lucide="terminal"></i>
-          <span>npx goalbuddy</span>
-        </a>
-      </section>
-
-      <section class="star-history" aria-labelledby="star-history-title">
-        <div class="section-intro" data-animate>
-          <h2 id="star-history-title">Star History</h2>
-          <p>Track GoalBuddy’s open source momentum over time.</p>
-        </div>
-        <a href="https://www.star-history.com/?repos=tolimarchuk%2Fgoalbuddy&type=date&legend=top-left">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=tolimarchuk/goalbuddy&type=date&theme=dark&legend=top-left">
-            <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=tolimarchuk/goalbuddy&type=date&legend=top-left">
-            <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=tolimarchuk/goalbuddy&type=date&legend=top-left">
-          </picture>
-        </a>
-      </section>
-
-      <footer class="site-footer">
-        <a class="brand" href="#top" aria-label="Goal Buddy home">
-          <img src="./assets/goalbuddy-mark.png" alt="">
-          <span>Goal Buddy</span>
-        </a>
-        <div class="footer-links">
-          <a class="repo-link" href="https://github.com/tolimarchuk/goalbuddy">
-            <i data-lucide="github"></i>
-            GitHub repo
-          </a>
-          <p class="built-by">
-            Built by
-            <a href="https://x.com/tolimarchuk" aria-label="tolibear on X">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14.2 10.4 22.7 0h-2L13.3 9.1 7.4 0H.6l8.9 13.7L.6 24h2l7.8-9.1 6.2 9.1h6.8l-9.2-13.6Zm-2.8 3.2-.9-1.3L3.3 1.5h3.1l5.8 8.7.9 1.3 7.5 11.1h-3.1l-6.1-9Z" fill="currentColor"/>
-              </svg>
-              tolibear
-            </a>
+      <section
+        class="board-section section-shell"
+        id="board"
+        aria-labelledby="board-title"
+      >
+        <div class="section-heading">
+          <p class="eyebrow">02 / Observe the work</p>
+          <h2 id="board-title">A constellation with a clear destination.</h2>
+          <p>
+            Keep the outcome in view while you inspect the task that is moving
+            it forward. Color helps you scan; explicit labels tell you what each
+            task means.
           </p>
         </div>
-      </footer>
+        <figure class="board-preview">
+          <img
+            src="./assets/constellation-board.png"
+            alt="The local constellation board showing a goal, completion criteria, active work, blocked decisions, and task evidence."
+            width="1440"
+            height="1024"
+            loading="lazy"
+          />
+          <figcaption>
+            An example board from local goal files. Your tasks, decisions, and
+            evidence determine what appears.
+          </figcaption>
+        </figure>
+        <div class="board-features">
+          <article>
+            <span class="status-dot active" aria-hidden="true"></span>
+            <h3>Current work</h3>
+            <p>
+              Find the active task and its next step without searching the
+              conversation.
+            </p>
+          </article>
+          <article>
+            <span class="status-dot blocked" aria-hidden="true"></span>
+            <h3>Needs attention</h3>
+            <p>
+              See what is blocked and what must happen before work can continue.
+            </p>
+          </article>
+          <article>
+            <span class="status-dot done" aria-hidden="true"></span>
+            <h3>Evidence of progress</h3>
+            <p>
+              Read receipts and verification results before treating a task as
+              complete.
+            </p>
+          </article>
+        </div>
+        <p class="command-label">
+          Open a prepared goal from your checkout · replace
+          <code>&lt;slug&gt;</code> with its directory name
+        </p>
+        <button
+          type="button"
+          class="copy-command board-command"
+          data-copy="node internal/cli/goal-maker.mjs board docs/goals/<slug>"
+        >
+          <code
+            >node internal/cli/goal-maker.mjs board
+            docs/goals/&lt;slug&gt;</code
+          ><span>Copy</span>
+        </button>
+      </section>
+      <section
+        class="local-section section-shell"
+        id="local"
+        aria-labelledby="local-title"
+      >
+        <div class="section-heading">
+          <p class="eyebrow">03 / Keep your bearings</p>
+          <h2 id="local-title">The sky changes.<br />Your files stay.</h2>
+          <p>
+            Your coding tool reads and updates a small workspace inside the
+            repository. The local browser viewer follows those files; it does
+            not replace them.
+          </p>
+        </div>
+        <div class="file-list">
+          <article>
+            <code>goal.md</code>
+            <p>
+              The destination: what you want, what is in scope, and the
+              observable result that proves success.
+            </p>
+          </article>
+          <article>
+            <code>state.yaml</code>
+            <p>
+              The current position: tasks, dependencies, active work, blockers,
+              and receipts.
+            </p>
+          </article>
+          <article>
+            <code>notes/</code>
+            <p>
+              The observations: longer findings, verification output, and
+              evidence for the next handoff.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="closing section-shell">
+        <p class="eyebrow">One goal. A path you can follow.</p>
+        <h2>Make the next step visible.</h2>
+        <a class="button primary" href="#start">Start from your checkout</a>
+        <p>MIT licensed · Dependency-free runtime · Codex and Claude Code</p>
+      </section>
     </main>
-
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="./script.js?v=20260618-social-proof"></script>
+    <footer class="site-footer section-shell">
+      <a class="brand" href="#top">thegoalbuddy</a>
+      <p>
+        Fork maintained by
+        <a href="https://github.com/plgonzalezrx8">plgonzalezrx8</a>.<br />Based
+        on
+        <a href="https://github.com/tolimarchuk/goalbuddy"
+          >GoalBuddy by tolimarchuk</a
+        >.
+      </p>
+      <div>
+        <a href="https://github.com/plgonzalezrx8/thegoalbuddy">Source</a
+        ><a
+          href="https://github.com/plgonzalezrx8/thegoalbuddy/blob/main/LICENSE"
+          >MIT license</a
+        >
+      </div>
+    </footer>
+    <p
+      class="copy-toast"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></p>
   </body>
 </html>

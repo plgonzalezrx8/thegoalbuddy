@@ -1,4 +1,4 @@
-# GoalBuddy v2 state.yaml
+# thegoalbuddy v2 state.yaml
 # Board truth lives here. goal.md is the editable charter; notes/ holds long receipts only.
 
 version: 2
@@ -21,7 +21,7 @@ goal:
     authority: requested # requested | approved | inferred | needs_approval | blocked
     proof_type: artifact # test | demo | artifact | metric | review | source_backed_answer | decision
     completion_proof: "<observable signal that proves the full original outcome is complete>"
-    likely_misfire: "<how GoalBuddy could succeed at the wrong thing>"
+    likely_misfire: "<how thegoalbuddy could succeed at the wrong thing>"
     blind_spots_considered: []
     existing_plan_facts: []
 

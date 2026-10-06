@@ -159,7 +159,7 @@ function quote(value) {
 
 function formatPlan(plan) {
   const lines = [
-    "GoalBuddy parallel plan",
+    "thegoalbuddy parallel plan",
     "",
     `Root board: ${plan.root_board_path}`,
     "Mutates state: no",

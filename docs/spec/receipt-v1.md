@@ -1,8 +1,8 @@
-# GoalBuddy Receipt and Task-Card Format, v1
+# thegoalbuddy Receipt and Task-Card Format, v1
 
-Status: stable, shipped since GoalBuddy 0.4.0. This document specifies the machine-readable format GoalBuddy uses to record delegated agent work: what a task authorized, what actually happened, and what proved it. It is harness-neutral — the format is plain YAML in ordinary repo files, and nothing in it depends on Codex, Claude Code, or any specific agent runtime.
+Status: stable, shipped since thegoalbuddy 0.4.0. This document specifies the machine-readable format thegoalbuddy uses to record delegated agent work: what a task authorized, what actually happened, and what proved it. It is harness-neutral — the format is plain YAML in ordinary repo files, and nothing in it depends on Codex, Claude Code, or any specific agent runtime.
 
-The reference validator is `check-goal-state.mjs`, bundled with the GoalBuddy skill. Everything this spec calls an invariant is machine-enforced by that checker; the rest is convention.
+The reference validator is `check-goal-state.mjs`, bundled with the thegoalbuddy skill. Everything this spec calls an invariant is machine-enforced by that checker; the rest is convention.
 
 ## Files
 

@@ -57,6 +57,10 @@ const DONE_RECEIPT = {
   harness: "codex",
 };
 
+function dispatchReport(receipt, patch = {}) {
+  return { ok: true, task_id: "T001", board_path: "docs/goals/one/state.yaml", role: "worker", harness: "codex", exit_status: 0, receipt, scope_check: { status: "clean", violations: [] }, ...patch };
+}
+
 function runApply(root, args, receipt) {
   const receiptPath = join(root, "receipt.json");
   writeFileSync(receiptPath, JSON.stringify(receipt));
@@ -109,8 +113,8 @@ test("apply-receipt reverts the board when the transition is invalid", () => {
 test("apply-receipt accepts a dispatch report and defaults status from the receipt", () => {
   const { root, goalDir } = makeBoard();
   try {
-    const dispatchReport = { ok: true, harness: "codex", receipt: DONE_RECEIPT, scope_check: { status: "clean" } };
-    const result = runApply(root, ["--task", "T001", "--activate", "T999"], dispatchReport);
+    const reportInput = dispatchReport({ ...DONE_RECEIPT, board_path: "docs/goals/one/state.yaml" });
+    const result = runApply(root, ["--task", "T001", "--activate", "T999"], reportInput);
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.continuation_required, true);
@@ -123,4 +127,63 @@ test("apply-receipt accepts a dispatch report and defaults status from the recei
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+for (const scenario of [
+  { name: "failed dispatch", wrap: (receipt) => dispatchReport(receipt, { ok: false, scope_check: { status: "violations", violations: ["README.md"] } }) },
+  { name: "missing dispatch scope verdict", wrap: (receipt) => dispatchReport(receipt, { scope_check: undefined }) },
+  { name: "skipped dispatch scope verdict", wrap: (receipt) => dispatchReport(receipt, { scope_check: { status: "skipped_not_git" } }) },
+  { name: "contradictory dispatch violations", wrap: (receipt) => dispatchReport(receipt, { scope_check: { status: "clean", violations: ["README.md"] } }) },
+  { name: "wrong task", patch: { task_id: "T777" } },
+  { name: "wrong board", patch: { board_path: "docs/goals/other/state.yaml" } },
+  { name: "wrong dispatch role", wrap: (receipt) => dispatchReport(receipt, { role: "judge" }) },
+  { name: "wrong dispatch task", wrap: (receipt) => dispatchReport(receipt, { task_id: "T999" }) },
+  { name: "wrong receipt role", patch: { role: "judge" } },
+  { name: "status conflict", patch: { result: "blocked" }, args: ["--status", "done"] },
+  { name: "invalid result", patch: { result: "success" } },
+]) {
+  test(`apply-receipt rejects ${scenario.name} without changing state`, () => {
+    const { root, goalDir } = makeBoard();
+    try {
+      const before = readFileSync(join(goalDir, "state.yaml"), "utf8");
+      const receipt = { ...DONE_RECEIPT, board_path: "docs/goals/one/state.yaml", ...scenario.patch };
+      const result = runApply(root, ["--task", "T001", "--activate", "T999", ...(scenario.args || [])], scenario.wrap ? scenario.wrap(receipt) : receipt);
+      assert.equal(result.status, 1, result.stdout);
+      assert.equal(readFileSync(join(goalDir, "state.yaml"), "utf8"), before);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}
+
+for (const [name, reportPatch, receiptPatch, expectedError] of [
+  ["missing report task", { task_id: undefined }, {}, /Dispatch task_id/],
+  ["missing report board", { board_path: undefined }, {}, /Dispatch board_path/],
+  ["missing report role", { role: undefined }, {}, /Dispatch role/],
+  ["missing report harness", { harness: undefined }, {}, /Dispatch harness/],
+  ["unsupported report harness", { harness: "other-cli" }, { harness: "other-cli" }, /Dispatch harness/],
+  ["missing exit status", { exit_status: undefined }, {}, /exit successfully/],
+  ["failed exit status", { exit_status: 1 }, {}, /exit successfully/],
+  ["missing receipt task", {}, { task_id: undefined }, /Receipt task_id is required/],
+  ["missing receipt board", {}, { board_path: undefined }, /Receipt board_path is required/],
+]) {
+  test(`apply-receipt rejects ${name} in an otherwise successful dispatch report`, () => {
+    const { root, goalDir } = makeBoard();
+    try {
+      const before = readFileSync(join(goalDir, "state.yaml"), "utf8");
+      const receipt = { ...DONE_RECEIPT, board_path: "docs/goals/one/state.yaml", ...receiptPatch };
+      const result = runApply(root, ["--task", "T001", "--activate", "T999"], dispatchReport(receipt, reportPatch));
+      assert.equal(result.status, 1, result.stdout);
+      assert.match(result.stderr, expectedError);
+      assert.equal(readFileSync(join(goalDir, "state.yaml"), "utf8"), before);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}
+
+test("apply-receipt still accepts a manual receipt without task or board identity", () => {
+  const { root } = makeBoard();
+  try {
+    const receipt = { ...DONE_RECEIPT };
+    delete receipt.task_id;
+    const result = runApply(root, ["--task", "T001", "--activate", "T999"], receipt);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  } finally { rmSync(root, { recursive: true, force: true }); }
 });

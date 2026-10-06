@@ -111,7 +111,7 @@ test("doctor fails when a required bundled agent is missing", () => {
     assert.equal(report.skill_installed, false);
     assert.equal(report.compatibility_skill_installed, false);
     assert.deepEqual(report.missing_agents, ["goal_worker.toml"]);
-    assert.match(report.errors.join("\n"), /Missing GoalBuddy Codex agent: goal_worker\.toml/);
+    assert.match(report.errors.join("\n"), /Missing thegoalbuddy Codex agent: goal_worker\.toml/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -142,7 +142,7 @@ test("doctor distinguishes fully removed and residual-agent Codex states", () =>
     assert.equal(residualReport.runtime_state, "residual-agents-only");
     assert.deepEqual(residualReport.residual_agents, ["goal_worker.toml"]);
     assert.deepEqual(residualReport.missing_agents, ["goal_judge.toml", "goal_scout.toml"]);
-    assert.match(residualReport.errors.join("\n"), /Residual GoalBuddy Codex agents remain/);
+    assert.match(residualReport.errors.join("\n"), /Residual thegoalbuddy Codex agents remain/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -232,11 +232,11 @@ test("install bundles the core local board surface into the skill", () => {
   }
 });
 
-test("check-update reports newer published GoalBuddy versions", () => {
+test("check-update reports newer published thegoalbuddy versions", () => {
   const env = {
     ...process.env,
     GOALBUDDY_TEST_NPM_LATEST_VERSION: "99.0.0",
-    GOALBUDDY_TEST_UPDATE_COMMAND: "/plugin update goalbuddy@goalbuddy",
+    GOALBUDDY_TEST_UPDATE_COMMAND: "/plugin update thegoalbuddy@thegoalbuddy",
   };
 
   const result = runGoalMaker(["check-update", "--json"], { env });
@@ -245,12 +245,12 @@ test("check-update reports newer published GoalBuddy versions", () => {
   assert.equal(report.current_version, packageVersion);
   assert.equal(report.latest_version, "99.0.0");
   assert.equal(report.update_available, true);
-  assert.equal(report.update_command, "/plugin update goalbuddy@goalbuddy");
+  assert.equal(report.update_command, "/plugin update thegoalbuddy@thegoalbuddy");
 
   const human = runGoalMaker(["check-update"], { env });
   assert.equal(human.status, 0, human.stderr || human.stdout);
-  assert.match(human.stdout, /GoalBuddy 99\.0\.0 is available/);
-  assert.match(human.stdout, /Update with: \/plugin update goalbuddy@goalbuddy/);
+  assert.match(human.stdout, /thegoalbuddy 99\.0\.0 is available/);
+  assert.match(human.stdout, /Update with: \/plugin update thegoalbuddy@thegoalbuddy/);
 });
 
 test("check-update avoids guessing an unknown install channel", () => {
@@ -261,7 +261,23 @@ test("check-update avoids guessing an unknown install channel", () => {
   const result = runGoalMaker(["check-update", "--json"], { env });
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const report = JSON.parse(result.stdout);
-  assert.equal(report.update_command, "use the install channel that installed GoalBuddy");
+  assert.equal(report.update_command, "use the install channel that installed thegoalbuddy");
+});
+
+test("install creates a fresh Codex home before native marketplace registration", () => {
+  const root = mkdtempSync(join(tmpdir(), "thegoalbuddy-fresh-codex-"));
+  try {
+    const env = fakeCodexEnv(root);
+    const bin = join(root, "bin", process.platform === "win32" ? "codex.cmd" : "codex");
+    const text = readFileSync(bin, "utf8");
+    const check = process.platform === "win32"
+      ? '@echo off\r\nif not exist "%CODEX_HOME%" (echo fresh Codex home missing & exit /b 1)\r\n'
+      : '#!/bin/sh\nif [ ! -d "$CODEX_HOME" ]; then echo "fresh Codex home missing" >&2; exit 1; fi\n';
+    writeFileSync(bin, check + text.replace(/^.*\r?\n/, ""));
+    const result = runGoalMaker(["install", "--target", "codex", "--codex-home", join(root, "fresh-home"), "--json"], { env });
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(JSON.parse(result.stdout).installed, true);
+  } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
 test("prompt renders a compact active task prompt without dumping full state", () => {
@@ -366,7 +382,7 @@ checks:
   }
 });
 
-test("prompt maps every GoalBuddy role for Codex and Claude Code", () => {
+test("prompt maps every thegoalbuddy role for Codex and Claude Code", () => {
   const root = mkdtempSync(join(tmpdir(), "goalbuddy-role-routing-"));
   try {
     const roles = [
@@ -896,14 +912,14 @@ test("plugin install adds marketplace, caches plugin, and enables config", () =>
 
     const report = JSON.parse(install.stdout);
     assert.equal(report.installed, true);
-    assert.equal(report.plugin, "goalbuddy@goalbuddy");
+    assert.equal(report.plugin, "thegoalbuddy@thegoalbuddy");
     assert.equal(report.version, packageVersion);
-    assert.match(report.cache_path, pathSuffixPattern("plugins", "cache", "goalbuddy", "goalbuddy", packageVersion));
+    assert.match(report.cache_path, pathSuffixPattern("plugins", "cache", "thegoalbuddy", "thegoalbuddy", packageVersion));
     assert.match(report.config_path, /config\.toml$/);
     assert.equal(existsSync(join(report.cache_path, "skills", "goal-prep", "surfaces", "local-goal-board", "scripts", "local-goal-board.mjs")), true);
 
     const config = readFileSync(join(codexHome, "config.toml"), "utf8");
-    assert.match(config, /\[plugins\."goalbuddy@goalbuddy"\]/);
+    assert.match(config, /\[plugins\."thegoalbuddy@thegoalbuddy"\]/);
     assert.match(config, /enabled = true/);
 
     const doctor = runGoalMaker(["doctor", "--target", "codex", "--goal-ready", "--codex-home", codexHome], { env });
@@ -920,7 +936,7 @@ test("plugin install adds marketplace, caches plugin, and enables config", () =>
   }
 });
 
-test("plugin install removes stale personal Codex GoalBuddy skills", () => {
+test("plugin install removes stale personal Codex thegoalbuddy skills", () => {
   const root = mkdtempSync(join(tmpdir(), "goal-maker-cli-test-"));
   try {
     const codexHome = join(root, "codex-home");
@@ -934,7 +950,7 @@ test("plugin install removes stale personal Codex GoalBuddy skills", () => {
     const staleAlias = join(codexHome, "skills", "goal-maker");
     mkdirSync(staleSkill, { recursive: true });
     mkdirSync(staleAlias, { recursive: true });
-    writeFileSync(join(staleSkill, "SKILL.md"), "stale GoalBuddy skill\n");
+    writeFileSync(join(staleSkill, "SKILL.md"), "stale thegoalbuddy skill\n");
     writeFileSync(join(staleAlias, "SKILL.md"), "stale Goal Maker alias\n");
 
     const install = runGoalMaker(["plugin", "install", "--codex-home", codexHome, "--json"], { env });
@@ -950,27 +966,27 @@ test("plugin install removes stale personal Codex GoalBuddy skills", () => {
   }
 });
 
-test("reset removes only GoalBuddy-owned Codex runtime surfaces", () => {
+test("reset removes only thegoalbuddy-owned Codex runtime surfaces", () => {
   const root = mkdtempSync(join(tmpdir(), "goal-maker-cli-test-"));
   try {
     const codexHome = join(root, "codex-home");
     const configPath = join(codexHome, "config.toml");
     mkdirSync(codexHome, { recursive: true });
     writeFileSync(configPath, [
-      '[plugins."goalbuddy@goalbuddy"]',
+      '[plugins."thegoalbuddy@thegoalbuddy"]',
       "enabled = true",
       "",
-      '[plugins."goalbuddy@goalbuddy".settings]',
+      '[plugins."thegoalbuddy@thegoalbuddy".settings]',
       'token = "remove-me"',
       "",
       '[plugins."github@openai-curated"]',
       "enabled = true",
       "",
-      "[marketplaces.goalbuddy]",
-      'source = "tolimarchuk/goalbuddy"',
+      "[marketplaces.thegoalbuddy]",
+      'source = "plgonzalezrx8/thegoalbuddy"',
       'source_type = "git"',
       "",
-      "[marketplaces.goalbuddy.settings]",
+      "[marketplaces.thegoalbuddy.settings]",
       'token = "remove-me-too"',
       "",
       "[marketplaces.other]",
@@ -978,7 +994,7 @@ test("reset removes only GoalBuddy-owned Codex runtime surfaces", () => {
       "",
     ].join("\n"));
 
-    const cacheRoot = join(codexHome, "plugins", "cache", "goalbuddy", "goalbuddy", packageVersion);
+    const cacheRoot = join(codexHome, "plugins", "cache", "thegoalbuddy", "thegoalbuddy", packageVersion);
     mkdirSync(cacheRoot, { recursive: true });
     writeFileSync(join(cacheRoot, "sentinel.txt"), "cached\n");
 
@@ -994,28 +1010,28 @@ test("reset removes only GoalBuddy-owned Codex runtime surfaces", () => {
     const staleAlias = join(codexHome, "skills", "goal-maker");
     mkdirSync(staleSkill, { recursive: true });
     mkdirSync(staleAlias, { recursive: true });
-    writeFileSync(join(staleSkill, "SKILL.md"), "stale GoalBuddy skill\n");
+    writeFileSync(join(staleSkill, "SKILL.md"), "stale thegoalbuddy skill\n");
     writeFileSync(join(staleAlias, "SKILL.md"), "stale Goal Maker alias\n");
 
     const reset = runGoalMaker(["reset", "--target", "codex", "--codex-home", codexHome, "--json"]);
     assert.equal(reset.status, 0, reset.stderr || reset.stdout);
     const report = JSON.parse(reset.stdout);
     assert.deepEqual(report.removed_config_sections, [
-      '[plugins."goalbuddy@goalbuddy"]',
-      "[marketplaces.goalbuddy]",
+      '[plugins."thegoalbuddy@thegoalbuddy"]',
+      "[marketplaces.thegoalbuddy]",
     ]);
-    assert.match(report.removed_plugin_cache_paths[0], pathSuffixPattern("plugins", "cache", "goalbuddy"));
+    assert.match(report.removed_plugin_cache_paths[0], pathSuffixPattern("plugins", "cache", "thegoalbuddy"));
     assert.equal(report.removed_agents.length, 3);
     assert.equal(report.removed_legacy_skill_paths.length, 2);
 
     const config = readFileSync(configPath, "utf8");
-    assert.doesNotMatch(config, /goalbuddy@goalbuddy/);
-    assert.doesNotMatch(config, /\[marketplaces\.goalbuddy\]/);
+    assert.doesNotMatch(config, /thegoalbuddy@thegoalbuddy/);
+    assert.doesNotMatch(config, /\[marketplaces\.thegoalbuddy\]/);
     assert.doesNotMatch(config, /remove-me/);
     assert.doesNotMatch(config, /remove-me-too/);
     assert.match(config, /\[plugins\."github@openai-curated"\]/);
     assert.match(config, /\[marketplaces\.other\]/);
-    assert.equal(existsSync(join(codexHome, "plugins", "cache", "goalbuddy")), false);
+    assert.equal(existsSync(join(codexHome, "plugins", "cache", "thegoalbuddy")), false);
     assert.equal(existsSync(join(agentsRoot, "goal_worker.toml")), false);
     assert.equal(existsSync(join(agentsRoot, "other.toml")), true);
     assert.equal(existsSync(staleSkill), false);
@@ -1052,7 +1068,7 @@ test("plugin install ignores non-version cache directories", () => {
     const install = runGoalMaker(["plugin", "install", "--codex-home", codexHome, "--json"], { env });
     assert.equal(install.status, 0, install.stderr || install.stdout);
 
-    const stalePreservePath = join(codexHome, "plugins", "cache", "goalbuddy", "goalbuddy", ".goalbuddy-preserved-extend-123-456");
+    const stalePreservePath = join(codexHome, "plugins", "cache", "thegoalbuddy", "thegoalbuddy", ".goalbuddy-preserved-extend-123-456");
     mkdirSync(stalePreservePath, { recursive: true });
 
     const reinstall = runGoalMaker(["plugin", "install", "--codex-home", codexHome, "--json"], { env });
@@ -1079,7 +1095,7 @@ test("plugin reinstall does not leave empty preserved cache directories", () => 
     const reinstall = runGoalMaker(["plugin", "install", "--codex-home", codexHome, "--json"], { env });
     assert.equal(reinstall.status, 0, reinstall.stderr || reinstall.stdout);
 
-    const cacheRoot = join(codexHome, "plugins", "cache", "goalbuddy", "goalbuddy");
+    const cacheRoot = join(codexHome, "plugins", "cache", "thegoalbuddy", "thegoalbuddy");
     const preservedDirs = readdirSync(cacheRoot).filter((entry) => entry.startsWith(".goalbuddy-preserved-"));
     assert.deepEqual(preservedDirs, []);
   } finally {
@@ -1098,7 +1114,7 @@ test("plugin install output points to Goal Prep and the local goal surface", () 
     assert.match(install.stdout, /Agents: 3 installed/);
     assert.match(install.stdout, /\$goal-prep/);
     assert.match(install.stdout, /Goal surface/);
-    assert.match(install.stdout, /npx goalbuddy board docs\/goals\/<slug>/);
+    assert.match(install.stdout, /npx thegoalbuddy board docs\/goals\/<slug>/);
     assert.doesNotMatch(install.stdout, /goalbuddy extend/);
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -1113,12 +1129,12 @@ test("--help on mutating commands prints help without installing", () => {
 
     const pluginHelp = runGoalMaker(["plugin", "install", "--help", "--codex-home", codexHome]);
     assert.equal(pluginHelp.status, 0, pluginHelp.stderr || pluginHelp.stdout);
-    assert.match(pluginHelp.stdout, /GoalBuddy Plugin/);
+    assert.match(pluginHelp.stdout, /thegoalbuddy Plugin/);
     assert.equal(existsSync(codexHome), false);
 
     const updateHelp = runGoalMaker(["update", "--help", "--codex-home", codexHome, "--claude-home", claudeHome]);
     assert.equal(updateHelp.status, 0, updateHelp.stderr || updateHelp.stdout);
-    assert.match(updateHelp.stdout, /goalbuddy update/);
+    assert.match(updateHelp.stdout, /thegoalbuddy update/);
     assert.equal(existsSync(codexHome), false);
     assert.equal(existsSync(claudeHome), false);
   } finally {
@@ -1137,13 +1153,13 @@ test("default command installs the native Codex plugin", () => {
 
     const report = JSON.parse(install.stdout);
     assert.equal(report.installed, true);
-    assert.equal(report.plugin, "goalbuddy@goalbuddy");
+    assert.equal(report.plugin, "thegoalbuddy@thegoalbuddy");
     assert.equal(report.agents.length, 3);
     assert.equal(existsSync(join(codexHome, "skills", "goalbuddy", "SKILL.md")), false);
     assert.equal(existsSync(join(codexHome, "agents", "goal_worker.toml")), true);
 
     const config = readFileSync(join(codexHome, "config.toml"), "utf8");
-    assert.match(config, /\[plugins\."goalbuddy@goalbuddy"\]/);
+    assert.match(config, /\[plugins\."thegoalbuddy@thegoalbuddy"\]/);
     assert.match(config, /enabled = true/);
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -1181,7 +1197,7 @@ test("install removes a pre-existing legacy ~/.claude/commands/goal-prep.md", ()
     const claudeHome = join(root, "claude-home");
     const legacyCommand = join(claudeHome, "commands", "goal-prep.md");
     mkdirSync(join(claudeHome, "commands"), { recursive: true });
-    writeFileSync(legacyCommand, "stale wrapper from older GoalBuddy install\n");
+    writeFileSync(legacyCommand, "stale wrapper from older thethegoalbuddy install\n");
 
     const install = runGoalMaker(["install", "--target", "claude", "--claude-home", claudeHome, "--json"]);
     assert.equal(install.status, 0, install.stderr || install.stdout);
@@ -1226,8 +1242,8 @@ test("install reports Codex plugin state in json mode", () => {
 
     const report = JSON.parse(result.stdout);
     assert.equal(report.installed, true);
-    assert.equal(report.plugin, "goalbuddy@goalbuddy");
-    assert.match(report.cache_path, pathSuffixPattern("plugins", "cache", "goalbuddy", "goalbuddy", packageVersion));
+    assert.equal(report.plugin, "thegoalbuddy@thegoalbuddy");
+    assert.match(report.cache_path, pathSuffixPattern("plugins", "cache", "thegoalbuddy", "thegoalbuddy", packageVersion));
     assert.equal(report.agents.length, 3);
     assert.equal(existsSync(join(codexHome, "skills", "goalbuddy")), false);
   } finally {
@@ -1247,16 +1263,16 @@ test("legacy goal-maker invocation prints rebrand notice only for human output",
 
     const human = runGoalMaker(["--help"], { env });
     assert.equal(human.status, 0, human.stderr || human.stdout);
-    assert.match(human.stdout, /GoalBuddy for Claude Code and Codex/);
-    assert.match(human.stdout, /goalbuddy install/);
-    assert.match(human.stderr, /goal-maker has been rebranded to goalbuddy/);
-    assert.match(human.stderr, /Use: npx goalbuddy/);
+    assert.match(human.stdout, /thegoalbuddy for Claude Code and Codex/);
+    assert.match(human.stdout, /thegoalbuddy install/);
+    assert.match(human.stderr, /goal-maker has been rebranded to thegoalbuddy/);
+    assert.match(human.stderr, /Use: npx thegoalbuddy/);
 
     const json = runGoalMaker(["install", "--codex-home", codexHome, "--json"], { env });
     assert.equal(json.status, 0, json.stderr || json.stdout);
     assert.equal(json.stderr, "");
     const report = JSON.parse(json.stdout);
-    assert.equal(report.plugin, "goalbuddy@goalbuddy");
+    assert.equal(report.plugin, "thegoalbuddy@thegoalbuddy");
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -1391,7 +1407,7 @@ test("installs /goalbuddy without shadowing Claude Code's native /goal", () => {
     const result = runGoalMaker(["install", "--target", "claude", "--claude-home", claudeHome, "--json"]);
     assert.equal(result.status, 0, result.stderr);
     const command = readFileSync(join(claudeHome, "commands", "goalbuddy.md"), "utf8");
-    assert.match(command, /GoalBuddy/);
+    assert.match(command, /thegoalbuddy/);
     assert.match(command, /state\.yaml/);
     assert.equal(existsSync(join(claudeHome, "commands", "goal.md")), false);
 
@@ -1406,13 +1422,14 @@ test("installs /goalbuddy without shadowing Claude Code's native /goal", () => {
   }
 });
 
-test("install removes an old GoalBuddy-owned /goal command", () => {
+test("install removes an old thegoalbuddy-owned /goal command", () => {
   const root = mkdtempSync(join(tmpdir(), "goalbuddy-goal-command-migration-"));
   try {
     const claudeHome = join(root, "claude");
     const legacyCommand = join(claudeHome, "commands", "goal.md");
     mkdirSync(join(claudeHome, "commands"), { recursive: true });
     const legacyBody = readFileSync("plugins/goalbuddy/commands/goalbuddy.md", "utf8")
+      .replaceAll("thegoalbuddy", "GoalBuddy")
       .replace("Run the GoalBuddy execution loop.\n", "Run the GoalBuddy `/goal` execution loop.\n");
     writeFileSync(legacyCommand, legacyBody);
 
@@ -1433,14 +1450,14 @@ test("install preserves a user-authored /goal command and doctor reports the col
     const claudeHome = join(root, "claude");
     const legacyCommand = join(claudeHome, "commands", "goal.md");
     mkdirSync(join(claudeHome, "commands"), { recursive: true });
-    writeFileSync(legacyCommand, "My private GoalBuddy helper.\n");
+    writeFileSync(legacyCommand, "My private thegoalbuddy helper.\n");
 
     const result = runGoalMaker(["install", "--target", "claude", "--claude-home", claudeHome, "--json"]);
     assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = JSON.parse(result.stdout);
     assert.equal(report.legacy_goal_command_cleanup.preserved, true);
     assert.match(report.warnings.join("\n"), /native \/goal may remain shadowed/);
-    assert.equal(readFileSync(legacyCommand, "utf8"), "My private GoalBuddy helper.\n");
+    assert.equal(readFileSync(legacyCommand, "utf8"), "My private thegoalbuddy helper.\n");
 
     const doctor = runGoalMaker(["doctor", "--target", "claude", "--claude-home", claudeHome]);
     assert.equal(doctor.status, 1, doctor.stderr || doctor.stdout);
@@ -1575,7 +1592,7 @@ test("resume scoped to one goal dir and empty repos behave", () => {
       assert.equal(none.status, 0, none.stderr || none.stdout);
       assert.deepEqual(JSON.parse(none.stdout).boards, []);
       const human = runGoalMaker(["resume"], { cwd: empty });
-      assert.match(human.stdout, /No GoalBuddy boards found/);
+      assert.match(human.stdout, /No thegoalbuddy boards found/);
     } finally {
       rmSync(empty, { recursive: true, force: true });
     }

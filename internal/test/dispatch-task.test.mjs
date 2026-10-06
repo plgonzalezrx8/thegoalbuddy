@@ -1,4 +1,4 @@
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -22,6 +22,10 @@ goal:
   kind: specific
   tranche: "test"
   status: active
+agents:
+  scout: unknown
+  worker: unknown
+  judge: unknown
 active_task: T001
 tasks:
   - id: T001
@@ -35,6 +39,12 @@ tasks:
       - "true"
     stop_if:
       - "Need files outside allowed_files."
+    receipt: null
+  - id: T999
+    type: judge
+    assignee: Judge
+    status: queued
+    objective: "Review the outcome."
     receipt: null
 `);
   const git = (args) => spawnSync("git", args, { cwd: root, encoding: "utf8" });
@@ -225,7 +235,9 @@ test("dispatch extracts bare receipts returned without the envelope", () => {
     const bare = JSON.stringify({
       result: "done",
       task_id: "T001",
-      decision: "approved",
+      board_path: "docs/goals/one/state.yaml",
+      changed_files: ["src/widget.mjs"],
+      commands: [{ cmd: "true", status: "pass" }],
       summary: "bare receipt",
     });
     const bin = fakeHarnessBin(root, "codex", `echo "export const widget = 2;" > src/widget.mjs\nprintf 'Some prose first.\\n\`\`\`json\\n%s\\n\`\`\`\\n' '${bare}'`);
@@ -237,4 +249,140 @@ test("dispatch extracts bare receipts returned without the envelope", () => {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+for (const scenario of [
+  { name: "already-dirty tracked edits", prepare: (root) => writeFileSync(join(root, "README.md"), "dirty before\n"), script: "echo 'dirty after' > README.md", files: ["README.md"] },
+  { name: "already-untracked edits", prepare: (root) => writeFileSync(join(root, "scratch.txt"), "before\n"), script: "echo after > scratch.txt", files: ["scratch.txt"] },
+  { name: "dirty tracked reversion", prepare: (root) => writeFileSync(join(root, "README.md"), "dirty\n"), script: "git checkout -- README.md", files: ["README.md"] },
+  { name: "untracked deletion", prepare: (root) => writeFileSync(join(root, "scratch.txt"), "before\n"), script: "rm scratch.txt", files: ["scratch.txt"] },
+  { name: "tracked rename", script: "mv README.md renamed.md", files: ["README.md", "renamed.md"] },
+  { name: "permission change", script: "chmod +x README.md", files: ["README.md"] },
+  { name: "staged-only change", prepare: (root) => writeFileSync(join(root, "README.md"), "dirty\n"), script: "git add README.md", files: ["README.md"] },
+  { name: "authoritative board write", script: "echo '# tampered' >> docs/goals/one/state.yaml", files: ["docs/goals/one/state.yaml"] },
+  { name: "ignored authoritative board write", prepare: (root) => { spawnSync("git", ["rm", "--cached", "docs/goals/one/state.yaml"], { cwd: root }); writeFileSync(join(root, ".gitignore"), "docs/goals/\n"); }, script: "echo '# tampered' >> docs/goals/one/state.yaml", files: ["docs/goals/one/state.yaml"] },
+]) {
+  test(`dispatch detects ${scenario.name}`, () => {
+    const root = makeProject();
+    try {
+      scenario.prepare?.(root);
+      const bin = fakeHarnessBin(root, "codex", `${scenario.script}\necho '${RECEIPT}'`);
+      const result = runDispatch(root, bin);
+      assert.equal(result.status, 1, result.stdout);
+      const report = JSON.parse(result.stdout);
+      assert.equal(report.scope_check.status, "violations");
+      assert.deepEqual(report.scope_check.violations, scenario.files);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}
+
+test("read-only dispatch rejects edits to goal control files", () => {
+  const root = makeProject({ taskType: "scout" });
+  try {
+    const bin = fakeHarnessBin(root, "codex", `echo '# tampered' >> docs/goals/one/state.yaml\necho '${RECEIPT}'`);
+    const result = runDispatch(root, bin);
+    assert.equal(result.status, 1, result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout).scope_check.violations, ["docs/goals/one/state.yaml"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("dispatch detects allowed edits to an already-dirty file without blaming unchanged dirty files", () => {
+  const root = makeProject();
+  try {
+    writeFileSync(join(root, "src", "widget.mjs"), "before dirty\n");
+    writeFileSync(join(root, "README.md"), "unrelated dirty\n");
+    const bin = fakeHarnessBin(root, "codex", `echo after > src/widget.mjs\necho '${RECEIPT}'`);
+    const result = runDispatch(root, bin);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout).scope_check.changed_files, ["src/widget.mjs"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+for (const [name, patch] of [
+  ["wrong task", { task_id: "T777" }],
+  ["wrong board", { board_path: "docs/goals/other/state.yaml" }],
+  ["missing provenance", { task_id: undefined, board_path: undefined }],
+  ["wrong role", { role: "judge" }],
+  ["wrong harness", { harness: "claude-code" }],
+  ["invalid result", { result: "success" }],
+]) {
+  test(`dispatch rejects ${name} receipts`, () => {
+    const root = makeProject();
+    try {
+      const receipt = JSON.stringify({ goalbuddy_receipt_v1: { ...JSON.parse(RECEIPT).goalbuddy_receipt_v1, ...patch } });
+      const bin = fakeHarnessBin(root, "codex", `echo '${receipt}'`);
+      const result = runDispatch(root, bin);
+      assert.equal(result.status, 1, result.stdout);
+      assert.equal(JSON.parse(result.stdout).ok, false);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}
+
+test("dispatch fails closed without a Git scope snapshot before running the executor", () => {
+  const root = makeProject();
+  try {
+    rmSync(join(root, ".git"), { recursive: true, force: true });
+    const bin = fakeHarnessBin(root, "codex", `echo launched > executor-launched\necho '${RECEIPT}'`);
+    const result = runDispatch(root, bin);
+    assert.equal(result.status, 1, result.stdout);
+    assert.equal(JSON.parse(result.stdout).scope_check.status, "unverified");
+    assert.equal(existsSync(join(root, "executor-launched")), false);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("dispatch permits an explicitly scoped note but never authoritative board edits under a broad grant", () => {
+  const root = makeProject();
+  try {
+    const path = join(root, "docs/goals/one/state.yaml");
+    const state = readFileSync(path, "utf8").replace("- src/widget.mjs", "- docs/goals/one/**");
+    writeFileSync(path, state);
+    const noteReceipt = JSON.stringify({ goalbuddy_receipt_v1: { ...JSON.parse(RECEIPT).goalbuddy_receipt_v1, changed_files: ["docs/goals/one/notes/evidence.md"] } });
+    const bin = fakeHarnessBin(root, "codex", `echo evidence > docs/goals/one/notes/evidence.md\necho '${noteReceipt}'`);
+    const allowed = runDispatch(root, bin);
+    assert.equal(allowed.status, 0, allowed.stderr || allowed.stdout);
+    fakeHarnessBin(root, "codex", `echo '# tampered' >> docs/goals/one/state.yaml\necho '${RECEIPT}'`);
+    const denied = runDispatch(root, bin);
+    assert.equal(denied.status, 1, denied.stdout);
+    assert.deepEqual(JSON.parse(denied.stdout).scope_check.violations, ["docs/goals/one/state.yaml"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("dispatch ignores echoed receipt schema placeholders when extracting a real bare receipt", () => {
+  const root = makeProject();
+  try {
+    const bare = JSON.stringify(JSON.parse(RECEIPT).goalbuddy_receipt_v1);
+    const bin = fakeHarnessBin(root, "codex", `echo '${bare}'\necho '{"result":"done | blocked","task_id":"<T###>","summary":"placeholder"}' >&2`);
+    const result = runDispatch(root, bin);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(JSON.parse(result.stdout).receipt.summary, "widget adjusted");
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("a successful fake executor report applies to its selected board end to end", () => {
+  const root = makeProject();
+  try {
+    const bin = fakeHarnessBin(root, "codex", `echo updated > src/widget.mjs\necho '${RECEIPT}'`);
+    const dispatched = runDispatch(root, bin);
+    assert.equal(dispatched.status, 0, dispatched.stderr || dispatched.stdout);
+    const reportPath = join(root, "dispatch-report.json");
+    writeFileSync(reportPath, dispatched.stdout);
+    const applied = spawnSync(process.execPath, [resolve("goalbuddy/scripts/apply-receipt.mjs"), "docs/goals/one", "--task", "T001", "--receipt", reportPath, "--activate", "T999", "--json"], { cwd: root, encoding: "utf8" });
+    assert.equal(applied.status, 0, applied.stderr || applied.stdout);
+    assert.equal(JSON.parse(applied.stdout).active_task, "T999");
+    assert.match(readFileSync(join(root, "docs/goals/one/state.yaml"), "utf8"), /harness: codex/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("dispatch protects a symlinked board when only its referent content changes", () => {
+  const root = makeProject();
+  try {
+    const statePath = join(root, "docs/goals/one/state.yaml");
+    const target = join(root, ".git", "board-state.yaml");
+    renameSync(statePath, target);
+    symlinkSync(target, statePath);
+    const bin = fakeHarnessBin(root, "codex", `echo '# changed referent' >> docs/goals/one/state.yaml\necho '${RECEIPT}'`);
+    const result = runDispatch(root, bin);
+    assert.equal(result.status, 1, result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout).scope_check.violations, ["docs/goals/one/state.yaml"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
 });

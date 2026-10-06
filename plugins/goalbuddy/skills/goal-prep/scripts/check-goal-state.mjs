@@ -287,7 +287,7 @@ const legacySignals = [
 
 if (version !== 2) {
   if (legacySignals) {
-    errors.push("legacy v1 goal state detected; GoalBuddy v2 requires version: 2 with a task board. Create a new v2 goal or migrate manually.");
+    errors.push("legacy v1 goal state detected; thegoalbuddy v2 requires version: 2 with a task board. Create a new v2 goal or migrate manually.");
   } else {
     errors.push("state.yaml must declare version: 2");
   }
@@ -313,12 +313,12 @@ if (isWeakProof(completionProof)) {
 function agentStatusWarning(agent, status) {
   const agentLabel = agent[0].toUpperCase() + agent.slice(1);
   if (status === "bundled_not_installed") {
-    return `agents.${agent} is bundled_not_installed; /goal can continue through PM fallback, but dedicated ${agentLabel} delegation is unavailable until installed. If dedicated agents are required before /goal, run the GoalBuddy CLI through the user's install channel with: agents`;
+    return `agents.${agent} is bundled_not_installed; /goal can continue through PM fallback, but dedicated ${agentLabel} delegation is unavailable until installed. If dedicated agents are required before /goal, run the thegoalbuddy CLI through the user's install channel with: agents`;
   }
   if (status === "missing") {
-    return `agents.${agent} is missing; /goal can continue through PM fallback, but dedicated ${agentLabel} delegation is unavailable. If dedicated agents are required before /goal, run the GoalBuddy CLI through the user's install channel with: install`;
+    return `agents.${agent} is missing; /goal can continue through PM fallback, but dedicated ${agentLabel} delegation is unavailable. If dedicated agents are required before /goal, run the thegoalbuddy CLI through the user's install channel with: install`;
   }
-  return `agents.${agent} is unknown; /goal must attempt the exact harness-specific ${agentLabel} agent once, then use PM fallback only if the harness reports it unavailable or returns an error. To check before /goal, run the GoalBuddy CLI through the user's install channel with: doctor`;
+  return `agents.${agent} is unknown; /goal must attempt the exact harness-specific ${agentLabel} agent once, then use PM fallback only if the harness reports it unavailable or returns an error. To check before /goal, run the thegoalbuddy CLI through the user's install channel with: doctor`;
 }
 
 for (const { agent, status } of agentStatuses) {
@@ -437,7 +437,7 @@ for (const task of tasks) {
       }
     }
     if (task.receipt.scalar("needs_judge") === true) {
-      warnings.push(`Worker receipt for ${task.id} requests legacy needs_judge; GoalBuddy now lets the PM continue by default and reviews only at phase, risk, ambiguity, rejected-verification, or final-completion boundaries`);
+      warnings.push(`Worker receipt for ${task.id} requests legacy needs_judge; thegoalbuddy now lets the PM continue by default and reviews only at phase, risk, ambiguity, rejected-verification, or final-completion boundaries`);
     }
   }
   if (task.type === "scout" && task.status === "done" && hasReceipt) {

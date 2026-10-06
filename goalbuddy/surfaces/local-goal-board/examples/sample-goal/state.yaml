@@ -4,7 +4,7 @@ goal:
   title: "Local Goal Board Surface"
   slug: "local-goal-board-surface"
   kind: specific
-  tranche: "Demonstrate local GoalBuddy board rendering."
+  tranche: "Demonstrate local thegoalbuddy board rendering."
   status: active
 
 active_task: null

@@ -12,6 +12,8 @@ const textTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".svg": "image/svg+xml; charset=utf-8",
   ".png": "image/png",
+  ".webp": "image/webp",
+  ".woff2": "font/woff2",
 };
 
 const SETTINGS_VERSION = 1;
@@ -31,7 +33,7 @@ const SETTINGS_OPTIONS = {
   motion: new Set(["system", "reduce", "allow"]),
 };
 const DEFAULT_BIND_HOST = "127.0.0.1";
-const DEFAULT_PUBLIC_HOST = "goalbuddy.localhost";
+const DEFAULT_PUBLIC_HOST = "thegoalbuddy.localhost";
 const DEFAULT_PORT = 41737;
 const STATE_CHANGE_SETTLE_MS = 300;
 
@@ -62,7 +64,7 @@ export async function main() {
     if (options.json) {
       console.log(JSON.stringify({ goalDir, appDir, board }, null, 2));
     } else {
-      console.log(`Generated GoalBuddy board app at ${appDir}`);
+      console.log(`Generated thegoalbuddy board app at ${appDir}`);
     }
     return { goalDir, appDir, board };
   }
@@ -88,10 +90,10 @@ export async function main() {
   if (options.json) {
     console.log(JSON.stringify({ goalDir, appDir: server.appDir || appDir, url: server.url, hubUrl: server.hubUrl, apiUrl: server.apiUrl, registered: Boolean(server.registered) }, null, 2));
   } else {
-    console.log(`GoalBuddy local board: ${server.url}`);
-    console.log(`GoalBuddy local hub: ${server.hubUrl}`);
+    console.log(`thegoalbuddy local board: ${server.url}`);
+    console.log(`thegoalbuddy local hub: ${server.hubUrl}`);
     if (server.registered) {
-      console.log("Registered with the existing GoalBuddy local board hub.");
+      console.log("Registered with the existing thegoalbuddy local board hub.");
     } else {
       console.log(`Watching: ${join(goalDir, "state.yaml")}`);
       console.log("Press Ctrl-C to stop.");
@@ -157,7 +159,7 @@ export async function startBoardServer(options = {}) {
   const boards = new Map();
   let baseUrl = "";
   let initialBoard = null;
-  const allowedHostnames = new Set(["localhost", "127.0.0.1", "[::1]", "::1", DEFAULT_PUBLIC_HOST]);
+  const allowedHostnames = new Set(["localhost", "127.0.0.1", "[::1]", "::1", "goalbuddy.localhost", DEFAULT_PUBLIC_HOST]);
   if (host) allowedHostnames.add(String(host).toLowerCase());
   if (publicHost) allowedHostnames.add(String(publicHost).toLowerCase());
 
@@ -196,11 +198,11 @@ export async function startBoardServer(options = {}) {
   const server = createServer(async (request, response) => {
     try {
       if (!requestHostAllowed(request, allowedHostnames)) {
-        sendForbidden(response, "Unexpected Host header for the GoalBuddy local board.");
+        sendForbidden(response, "Unexpected Host header for the thegoalbuddy local board.");
         return;
       }
       if ((request.method === "POST" || request.method === "PUT") && !originAllowed(request, allowedHostnames)) {
-        sendForbidden(response, "Cross-site requests are not allowed for the GoalBuddy local board.");
+        sendForbidden(response, "Cross-site requests are not allowed for the thegoalbuddy local board.");
         return;
       }
       const url = new URL(request.url || "/", `http://${request.headers.host || "127.0.0.1"}`);
@@ -302,9 +304,9 @@ async function registerWithBoardHub({ goalDir, host, port }) {
   if (!response.ok) {
     const message = await response.text();
     if (response.status === 404) {
-      throw new Error(`Port ${port} is already in use, but it is not the GoalBuddy multi-board hub. Stop the existing local board process on ${host}:${port}, then retry.`);
+      throw new Error(`Port ${port} is already in use, but it is not the thegoalbuddy multi-board hub. Stop the existing local board process on ${host}:${port}, then retry.`);
     }
-    throw new Error(`GoalBuddy local board hub rejected ${goalDir}: ${message}`);
+    throw new Error(`thegoalbuddy local board hub rejected ${goalDir}: ${message}`);
   }
   return { ...(await response.json()), registered: true };
 }
@@ -316,7 +318,7 @@ function redirectToFirstBoard(response, boards, baseUrl, settings = {}) {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
     });
-    response.end("No GoalBuddy boards are registered.");
+    response.end("No thegoalbuddy boards are registered.");
     return;
   }
 
@@ -423,10 +425,10 @@ function sendUnregisteredBoardPath(response, pathname, boards, baseUrl) {
     return `- ${summary.title}: ${summary.url}`;
   });
   response.end([
-    `GoalBuddy board path is not registered in this local hub: ${pathname}`,
+    `thegoalbuddy board path is not registered in this local hub: ${pathname}`,
     "",
-    "This server is the GoalBuddy multi-board hub. Do not stop it just because a /<slug>/ board URL returned 404.",
-    "Start or rerun `npx goalbuddy board <goal-dir>` to register that goal on this same port, then open the printed /<slug>/ URL.",
+    "This server is the thegoalbuddy multi-board hub. Do not stop it just because a /<slug>/ board URL returned 404.",
+    "Start or rerun `npx thegoalbuddy board <goal-dir>` to register that goal on this same port, then open the printed /<slug>/ URL.",
     "",
     "Registered boards:",
     registeredBoards.length ? registeredBoards.join("\n") : "- none",
@@ -489,7 +491,7 @@ function safePayload(goalDir) {
     return {
       generatedAt: new Date().toISOString(),
       error: error.message,
-      goal: { title: "GoalBuddy Board", slug: "", status: "error", activeTask: "", tranche: "" },
+      goal: { title: "thegoalbuddy Board", slug: "", status: "error", activeTask: "", tranche: "" },
       columns: [
         { id: "todo", title: "Todo", description: "Queued work ready to pull", tasks: [] },
         { id: "in-progress", title: "In Progress", description: "The active task", tasks: [] },
@@ -640,15 +642,15 @@ function settingsPath() {
 }
 
 function usage() {
-  console.log(`GoalBuddy Local Goal Board
+  console.log(`thegoalbuddy Local Goal Board
 
 Usage:
-  npx goalbuddy board docs/goals/<slug>
-  npx goalbuddy board docs/goals/<slug> --once --json
+  npx thegoalbuddy board docs/goals/<slug>
+  npx thegoalbuddy board docs/goals/<slug> --once --json
 
 Options:
   --goal <path>   Goal directory containing state.yaml.
-  --host <host>   Local server bind host. Default: 127.0.0.1, advertised as goalbuddy.localhost.
+  --host <host>   Local server bind host. Default: 127.0.0.1, advertised as thegoalbuddy.localhost.
   --port <port>   Local server port. Default: 41737 shared board hub.
   --once          Generate .goalbuddy-board and exit.
   --json          Print structured output.

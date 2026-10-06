@@ -1,6 +1,18 @@
-# goalbuddy.dev DNS
+# thegoalbuddy site hosting
 
-GitHub Pages is configured for:
+The fork's static site source is `internal/site`, with deployment defined in `.github/workflows/pages.yml`. No site was deployed as part of the branding change.
+
+The default GitHub Pages URL for this repository, once Pages is enabled and a deployment succeeds, is:
+
+```text
+https://plgonzalezrx8.github.io/thegoalbuddy/
+```
+
+The upstream `goalbuddy.dev` CNAME has been removed from this fork. Do not publish using that domain unless its owner explicitly transfers it. Choose and verify any new custom domain before adding a new CNAME or changing canonical/social URLs.
+
+## Historical upstream configuration
+
+The following records describe the upstream project, not this fork:
 
 - Repository: `tolimarchuk/goalbuddy`
 - Pages build type: GitHub Actions workflow

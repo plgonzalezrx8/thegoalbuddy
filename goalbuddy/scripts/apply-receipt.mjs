@@ -6,6 +6,9 @@ import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadBoard, selectTask } from "./render-task-prompt.mjs";
+import { dispatchReportErrors, receiptErrors } from "./receipt-provenance.mjs";
+
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 
 if (isDirectRun()) {
@@ -63,7 +66,8 @@ export function applyReceipt(options) {
   const goalRoot = resolve(options.goalRoot);
   const statePath = basename(goalRoot) === "state.yaml" ? goalRoot : join(goalRoot, "state.yaml");
   if (!existsSync(statePath)) throw new Error(`state file not found: ${statePath}`);
-  const receipt = loadReceipt(options.receiptPath);
+  const task = selectTask(loadBoard(statePath), options.taskId);
+  const receipt = loadReceipt(options.receiptPath, { taskId: options.taskId, boardPath: statePath, role: task.type, status: options.status });
   const status = options.status || (receipt.result === "done" ? "done" : "blocked");
   if (!["done", "blocked"].includes(status)) throw new Error(`Unsupported --status: ${status}`);
 
@@ -115,12 +119,15 @@ export function applyReceipt(options) {
   };
 }
 
-function loadReceipt(receiptPath) {
+function loadReceipt(receiptPath, context) {
   const parsed = JSON.parse(readFileSync(resolve(receiptPath), "utf8"));
-  const candidate = parsed.receipt && parsed.scope_check ? parsed.receipt : parsed.goalbuddy_receipt_v1 ?? parsed;
+  const isDispatch = parsed && typeof parsed === "object" && "receipt" in parsed;
+  const candidate = isDispatch ? parsed.receipt : parsed.goalbuddy_receipt_v1 ?? parsed;
   if (!candidate || typeof candidate !== "object" || typeof candidate.result !== "string") {
     throw new Error(`${receiptPath} does not contain a receipt (need a JSON object with a "result" field, a goalbuddy_receipt_v1 envelope, or a dispatch report).`);
   }
+  const errors = isDispatch ? dispatchReportErrors(parsed, context) : receiptErrors(candidate, { ...context, validateRoleFields: false });
+  if (errors.length) throw new Error(`Receipt rejected: ${errors.join(" ")}`);
   const receipt = { ...candidate };
   delete receipt.board_path;
   delete receipt.task_id;

@@ -16,7 +16,7 @@
 - Proof type: `test | demo | artifact | metric | review | source_backed_answer | decision`
 - Completion proof: <observable signal that closes the full original outcome>
 - Goal oracle: <live check, walkthrough, artifact, metric, source-backed answer, or decision that keeps pressure on the goal>
-- Likely misfire: <how GoalBuddy could succeed at the wrong thing>
+- Likely misfire: <how thegoalbuddy could succeed at the wrong thing>
 - Blind spots considered: <risks, unstated choices, or success dimensions surfaced during diagnostic intake>
 - Existing plan facts: <user-provided steps/files/constraints/sequencing to preserve and validate, or none>
 
@@ -74,7 +74,7 @@ The PM owns board health. If the board looks stale, misleading, offline, or inco
 node <skill-path>/scripts/check-goal-state.mjs docs/goals/<slug>
 ```
 
-If the local board is running, compare `state.yaml` to the live board API. Repair only GoalBuddy control files unless an active Worker or PM task explicitly allows product-file edits.
+If the local board is running, compare `state.yaml` to the live board API. Repair only thegoalbuddy control files unless an active Worker or PM task explicitly allows product-file edits.
 
 ## Canonical Board
 
@@ -95,9 +95,9 @@ Claude Code: /goalbuddy Follow docs/goals/<slug>/goal.md.
 
 On every `/goal` continuation:
 
-1. Read this charter, and follow the GoalBuddy execution contract (`references/goal-execution.md` in the goal-prep skill) when available.
+1. Read this charter, and follow the thegoalbuddy execution contract (`references/goal-execution.md` in the goal-prep skill) when available.
 2. Read `state.yaml`.
-3. Run the bundled GoalBuddy update checker when available and mention a newer version without blocking.
+3. Run the bundled thegoalbuddy update checker when available and mention a newer version without blocking.
 4. Re-check the intake: original request, input shape, authority, proof, blind spots, existing plan facts, and likely misfire.
 5. Work only on the active board task.
 6. Assign Scout, Judge, Worker, or PM according to the task.
