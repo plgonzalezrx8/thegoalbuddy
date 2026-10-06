@@ -127,17 +127,17 @@
             <span class="step-number">01</span>
             <h3>Start</h3>
             <p>
-              Install from this checkout, restart your coding tool, then tell
-              Goal Prep what you want to achieve and how you will know it
+              Run the published npm package with npx, restart your coding
+              tool, then tell Goal Prep what you want to achieve and how you will know it
               worked.
             </p>
-            <p class="command-label">In the repository terminal · Node 18+</p>
+            <p class="command-label">In your project terminal · Node 18+ and npm</p>
             <button
               type="button"
               class="copy-command"
-              data-copy="node internal/cli/goal-maker.mjs"
+              data-copy="npx thegoalbuddy@latest"
             >
-              <code>node internal/cli/goal-maker.mjs</code><span>Copy</span>
+              <code>npx thegoalbuddy@latest</code><span>Copy</span>
             </button>
             <p class="command-label">
               Installs both tools. Limit to one with
@@ -163,9 +163,9 @@
             <button
               type="button"
               class="copy-command"
-              data-copy="node internal/cli/goal-maker.mjs resume"
+              data-copy="npx thegoalbuddy@latest resume"
             >
-              <code>node internal/cli/goal-maker.mjs resume</code
+              <code>npx thegoalbuddy@latest resume</code
               ><span>Copy</span>
             </button>
             <p>
@@ -200,10 +200,28 @@
           </article>
         </div>
         <p class="publication-note">
-          Fork preview: <code>thegoalbuddy</code> has not been published to npm
-          by this change. Use the checkout command above. The familiar
-          <code>npx thegoalbuddy</code> path is for a future published release.
+          <a href="https://www.npmjs.com/package/thegoalbuddy">Published on npm</a>
+          · Version 0.5.0. npx downloads and runs the package; no repository
+          clone, global install, or build is required. Goal files stay in your
+          project, and the integrations stay in your coding-tool home.
         </p>
+        <details class="setup-details">
+          <summary>Check setup and keep it up to date</summary>
+          <p>
+            Run terminal commands from your project. To check your installed
+            tool, use <code>npx thegoalbuddy@latest doctor --target codex</code>
+            or <code>npx thegoalbuddy@latest doctor --target claude</code>.
+            If a coding tool was missing during setup, install and authenticate
+            it, then rerun the install command with its <code>--target</code>.
+          </p>
+          <p>
+            Update with <code>npx thegoalbuddy@latest update</code>, then restart
+            your coding tools. Add <code>--target codex</code> or
+            <code>--target claude</code> to update just one. Use
+            <code>$goal-prep</code> or <code>/goal-prep</code> inside your coding
+            tool; run the printed handoff there to begin execution.
+          </p>
+        </details>
         <details class="setup-details">
           <summary>Already using upstream GoalBuddy?</summary>
           <p>
@@ -273,16 +291,16 @@
           </article>
         </div>
         <p class="command-label">
-          Open a prepared goal from your checkout · replace
+          In your project terminal, open a prepared goal · replace
           <code>&lt;slug&gt;</code> with its directory name
         </p>
         <button
           type="button"
           class="copy-command board-command"
-          data-copy="node internal/cli/goal-maker.mjs board docs/goals/<slug>"
+          data-copy="npx thegoalbuddy@latest board docs/goals/<slug>"
         >
           <code
-            >node internal/cli/goal-maker.mjs board
+            >npx thegoalbuddy@latest board
             docs/goals/&lt;slug&gt;</code
           ><span>Copy</span>
         </button>

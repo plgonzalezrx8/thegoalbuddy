@@ -2,24 +2,24 @@
 
 This is GoalBuddy's single, running release history. New releases go at the top. Do not create separate versioned changelog files under `docs/releases/`; that directory contains the release process only.
 
-Historical dates are public npm publication dates. Prepared fork releases are explicitly marked unpublished; their preparation date is not a publication claim. Historical entries describe the product as it behaved in that release, with explicit notes where a later release superseded the behavior.
+Historical dates are public npm publication dates. Unpublished release candidates are explicitly marked as such; preparation dates are not publication claims. Historical entries describe the product as it behaved in that release, with explicit notes where a later release superseded the behavior.
 
 Release history must describe product behavior with anonymized evidence. Never include client, customer, company, donor, or private project names. Public contributor handles may appear only for attribution.
 
-## 0.5.0: Constellation Observatory (Prepared October 6, 2026; unpublished)
+## 0.5.0: Constellation Observatory (October 6, 2026)
 
-First release candidate of the **thegoalbuddy** fork. The package, command, and repository belong to `plgonzalezrx8`; upstream MIT attribution and compatibility commands remain intact.
+First published release of the **thegoalbuddy** fork. The package, command, and repository belong to `plgonzalezrx8`; upstream MIT attribution and compatibility commands remain intact.
 
 - **Observatory board and branding.** A local constellation view shows completion criteria, active work, next actions, blockers, receipts, and verification evidence. Bundled imagery, self-hosted fonts, and licenses travel with the package. Mobile layouts prioritize current work and decisions; larger goals retain a complete task list.
 - **Live details and accessibility.** Open task and child-task details update with local state, preserve focus, and support Tab, Shift+Tab, and Escape. Removed tasks return focus to a stable visible target.
 - **Execution safeguards.** Dispatch scope checks inspect already-dirty files, modes, index changes, and protected goal files. Receipt application rejects failed, unsafe, incomplete, or mismatched dispatch reports before changing state.
 - **Clearer onboarding and updates.** Start, Resume, and Unblock precede internal terminology. Installation provenance distinguishes npm, global npm, and native plugins; copied Claude skills recommend the correct update route. Fresh Codex homes are created before native marketplace registration.
 - **TypeScript development.** Program code, tests, fixtures, and build/release tools are maintained in TypeScript. Generated Node and browser runtime preserves plain-Node installation, native plugin checkout support, and the dependency-free runtime. Compiler, generated-output, and mirror checks reject drift.
-- **Sites website.** The accepted Constellation Observatory website is prepared for Sites hosting on an assigned Codex subdomain, with repository-controlled source, self-hosted assets, and a local-file product model. Deployment evidence is recorded separately from npm release status.
+- **Sites website.** The Constellation Observatory website is hosted through Sites on an assigned Codex subdomain, with repository-controlled source, self-hosted assets, and a local-file product model. Deployment evidence is recorded separately from npm release status.
 - **Release checks.** Typechecks, behavior, host/browser adoption, hosted website verification, and independent review precede the final npm artifact. Identity, version eligibility, readiness, and artifact installation guard the final release; explicit authorization is required before publishing.
 - **Installation coverage.** Real tarball smoke tests exercise scripts-enabled local and global installs, installed executables, npm exec, target setup, doctor, updates, and observatory assets in isolated homes.
 
-No npm publication or GitHub release is recorded for this candidate. Website deployment status and its exact Sites URL belong in the hosting evidence; website deployment does not authorize npm publication.
+Published on npm on October 6, 2026. Registry version, maintainer and integrity were verified against the tested tarball, and a fresh anonymous registry installation passed. Install with `npx thegoalbuddy@latest`. A GitHub release has not been created. Website access remains owner-private; hosting and npm publication are separate outcomes.
 
 ## 0.4.3: Restore Claude's Native `/goal` (2026-08-05)
 

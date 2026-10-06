@@ -17,7 +17,7 @@ function browserFixture(clipboard: "success" | "denied" | "fallback", fallbackSu
     focus(): void { activeElement = this; }
   }
   class FakeButton extends FakeElement {
-    dataset = { copy: "node internal/cli/goal-maker.mjs" };
+    dataset = { copy: "npx thegoalbuddy@latest" };
     label = new FakeElement();
     private isDisabled = false;
     get disabled(): boolean { return this.isDisabled; }

@@ -2,7 +2,7 @@
 
 [CHANGELOG.md](../../CHANGELOG.md) is the single running release history. Add new releases at the top; keep this directory for process instructions. Preserve upstream release records and MIT attribution. Describe behavior with anonymized evidence; do not include private client or project names.
 
-Version **0.5.0** is the intended first fork release and remains unpublished. The earlier pre-migration artifact is superseded. TypeScript migration, Constellation Observatory branding, and the website hosted through Sites must be verified before creating the final npm artifact. Publication requires explicit authorization after that artifact passes its checks.
+Version **0.5.0** is the published first fork release, verified on the official registry with matching tested-artifact integrity and a fresh anonymous installation. Users install and run it with `npx thegoalbuddy@latest`; see the [usage guide](../../README.md#start-here). The process below applies to future releases. Preserve the tested 0.5.0 tarball; do not rebuild, repack, or attempt to republish that version. Later repository documentation or website changes do not alter the already-published npm artifact.
 
 ## Account and compatibility
 

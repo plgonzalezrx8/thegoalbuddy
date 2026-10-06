@@ -1,6 +1,6 @@
 # thegoalbuddy
 
-[Website](https://thegoalbuddy.pete-nektarios.chatgpt.site) · [Source](https://github.com/plgonzalezrx8/thegoalbuddy)
+[Website](https://thegoalbuddy.pete-nektarios.chatgpt.site) · [npm](https://www.npmjs.com/package/thegoalbuddy) · [Source](https://github.com/plgonzalezrx8/thegoalbuddy)
 
 **Keep your goal in sight.**
 
@@ -18,18 +18,19 @@ This is an MIT-licensed fork of [GoalBuddy by tolimarchuk](https://github.com/to
 
 ## Start Here
 
-The fork npm package **has not been published by this change**. From this checkout, with Node 18 or later, install into Codex and Claude Code. Committed generated runtime works directly with Node; installation does not require a TypeScript compiler:
+**thegoalbuddy 0.5.0 is published on npm.** Open a terminal in the project you want to work on and run the published package with `npx`:
 
 ```bash
-node internal/cli/goal-maker.mjs
+npx thegoalbuddy@latest
 ```
 
-Node.js 18 or later and npm are required; a maintained Node 22 or 24 installation is recommended. Codex setup needs a Codex CLI with `codex plugin marketplace` support on your PATH. Claude setup writes its skill, command, and agent files even before Claude Code is installed; install and authenticate Claude Code before executing goals. The package does not supply a coding-tool subscription or unlock native Codex `/goal`.
+Node.js 18 or later and npm (which includes `npx`) are required; a maintained Node 22 or 24 installation is recommended. `npx` downloads the package from npm and runs it; you do not need to clone this repository, install the package globally, or build it. Accept npm’s download prompt if it appears. Codex setup needs a Codex CLI with `codex plugin marketplace` support on your PATH. Claude setup writes its skill, command, and agent files even before Claude Code is installed; install and authenticate Claude Code before executing goals. The package does not supply a coding-tool subscription or unlock native Codex `/goal`.
 
-To install into just one tool, use `--target codex` or `--target claude`. For example:
+The default command installs the integration into both Codex and Claude Code. If you use only one tool, select it explicitly:
 
 ```bash
-node internal/cli/goal-maker.mjs --target claude
+npx thegoalbuddy@latest --target codex
+npx thegoalbuddy@latest --target claude
 ```
 
 Restart your coding tool, then prepare a goal:
@@ -43,14 +44,27 @@ Tell Goal Prep what you want to accomplish and what observable result will prove
 
 Codex uses native `/goal` when your account has that feature. thegoalbuddy does not enable it. Claude Code uses the installed `/goalbuddy` command, leaving Claude's own `/goal` untouched. If native Codex `/goal` is unavailable, use Claude Code or the active-task prompt and your coding tool's normal agent flow; the goal files remain usable.
 
-After a future npm release, `npx thegoalbuddy` will be the published installation path. The examples below describe that installed CLI; before publication, replace `npx thegoalbuddy` or `thegoalbuddy` with `node internal/cli/goal-maker.mjs` from this checkout.
+### Check the installation
 
-After publication, use `npx thegoalbuddy@latest` for a fresh npm execution, or `npm install -g thegoalbuddy@latest` followed by `thegoalbuddy`. Global npm installation attempts setup for both tools in its postinstall step; if a host is unavailable, the executable remains installed and reports how to retry. `GOALBUDDY_SKIP_POSTINSTALL=1` skips automatic host setup. Use `thegoalbuddy --target claude` or `--target codex` to retry one target, then `thegoalbuddy doctor --target claude` and `thegoalbuddy doctor --target codex` to check the installation.
+Run the check for each tool you installed:
+
+```bash
+npx thegoalbuddy@latest doctor --target codex
+npx thegoalbuddy@latest doctor --target claude
+```
+
+If setup did not complete because a coding tool was missing, install and authenticate that tool, then rerun the matching `--target` installation command. Restart your coding tool after installing or updating the integration.
+
+### Terminal commands and coding-tool commands
+
+Use `npx thegoalbuddy@latest <command>` in your terminal. Use `$goal-prep` or `/goal-prep` inside your coding tool, then run its printed `/goal` or `/goalbuddy` handoff there. The installer prepares the integration; it does not start a goal.
+
+`npx` uses an npm cache for the executable. Installed integrations live in your coding-tool home, while each goal’s `docs/goals/<slug>/` files live in your project. Use the `npx` prefix for terminal commands; this workflow does not add a global `thegoalbuddy` executable to your PATH. `@latest` selects the current published release; use `npx thegoalbuddy@0.5.0` when you want to pin this version.
 
 ### Resume an existing goal
 
 ```bash
-node internal/cli/goal-maker.mjs resume
+npx thegoalbuddy@latest resume
 ```
 
 This lists local goals, their active tasks, and the continuation command for each coding tool. Use the printed command to pick up from the files already in your repository. You can begin in Codex and resume in Claude Code, or the other way around.
@@ -72,7 +86,7 @@ Disable the upstream `goalbuddy@goalbuddy` plugin first to avoid two `$goal-prep
 Harnesses churn; repos persist. A thegoalbuddy board lives in your repo as plain files, so the goal outlives whichever tool started it: begin a goal in Codex, resume it in Claude Code tomorrow, or the other way around, using the command for that harness.
 
 ```bash
-npx thegoalbuddy resume
+npx thegoalbuddy@latest resume
 ```
 
 `resume` lists every live board in the repo with its status, active task, and both continuation commands: Codex `/goal Follow docs/goals/<slug>/goal.md.` and Claude Code `/goalbuddy Follow docs/goals/<slug>/goal.md.`. Receipts can record which harness performed each task, so the board's history survives the handoff intact.
@@ -80,7 +94,7 @@ npx thegoalbuddy resume
 Boards can also mix vendors within a single run — a Claude judge and a Codex worker on the same board:
 
 ```bash
-npx thegoalbuddy dispatch docs/goals/<slug> --to codex
+npx thegoalbuddy@latest dispatch docs/goals/<slug> --to codex
 ```
 
 `dispatch` renders the active task's prompt, runs the target CLI headless (`codex` or `claude-code`), and returns a receipt with a write-scope report. It requires a Git working tree and compares before/after content, file modes, and index state, including files that were already dirty. Worker changes must stay inside `allowed_files`; read-only roles must change nothing. Authoritative goal control files are protected even when Git ignores them. Scope snapshots cover tracked and non-ignored untracked Git files plus the goal-file trees; other ignored outputs outside those trees are outside this check.
@@ -103,16 +117,16 @@ The Codex plugin bundles `$goal-prep`; a clean Codex install should not need per
 To verify a Codex install:
 
 ```bash
-npx thegoalbuddy doctor --target codex --goal-ready
+npx thegoalbuddy@latest doctor --target codex --goal-ready
 ```
 
 To remove thegoalbuddy-owned Codex runtime surfaces:
 
 ```bash
-npx thegoalbuddy reset --target codex
+npx thegoalbuddy@latest reset --target codex
 ```
 
-Native `codex plugin remove thegoalbuddy@thegoalbuddy` only removes the native plugin surface. thegoalbuddy also owns the `goal_*.toml` agent files it installed, its Codex plugin cache, its marketplace entry, and old personal skill folders from earlier installs. Use `thegoalbuddy reset --target codex` when you want those thegoalbuddy-owned files removed too.
+Native `codex plugin remove thegoalbuddy@thegoalbuddy` only removes the native plugin surface. thegoalbuddy also owns the `goal_*.toml` agent files it installed, its Codex plugin cache, its marketplace entry, and old personal skill folders from earlier installs. Use `npx thegoalbuddy@latest reset --target codex` when you want those thegoalbuddy-owned files removed too.
 
 ## What It Creates
 
@@ -177,7 +191,7 @@ Use subgoals for bounded child work that belongs to a parent task. Use multiple 
 
 thegoalbuddy can prepare safe parallel work; it does not run a parallel org chart or install arbitrary extension packs.
 
-Use `thegoalbuddy prompt docs/goals/<slug>` to render a compact prompt for the active task without dumping the whole state file. The prompt includes exact role identifiers for both harnesses: Codex uses `required_spawn_agent_type` (`goal_scout`, `goal_worker`, or `goal_judge`), while Claude Code uses `required_claude_subagent_type` (`goal-scout`, `goal-worker`, or `goal-judge`). PMs should use the exact thegoalbuddy role instead of a generic agent. Use `thegoalbuddy parallel-plan docs/goals/<slug>` to inspect read-only or disjoint write-scope work that can be handed to native Codex or Claude Code agent flows. The command reports recommendations only; it does not mutate state or spawn agents.
+Use `npx thegoalbuddy@latest prompt docs/goals/<slug>` to render a compact prompt for the active task without dumping the whole state file. The prompt includes exact role identifiers for both harnesses: Codex uses `required_spawn_agent_type` (`goal_scout`, `goal_worker`, or `goal_judge`), while Claude Code uses `required_claude_subagent_type` (`goal-scout`, `goal-worker`, or `goal-judge`). PMs should use the exact thegoalbuddy role instead of a generic agent. Use `npx thegoalbuddy@latest parallel-plan docs/goals/<slug>` to inspect read-only or disjoint write-scope work that can be handed to native Codex or Claude Code agent flows. The command reports recommendations only; it does not mutate state or spawn agents.
 
 ## Update
 
@@ -189,17 +203,25 @@ npx thegoalbuddy@latest update
 
 That updates both Codex and Claude Code.
 
-For a global installation, first run `npm install -g thegoalbuddy@latest`, then `thegoalbuddy update`. Running an old global executable only refreshes integrations from that old package; it does not download a new npm version. Genuine Claude marketplace plugin installations use `/plugin update thegoalbuddy@thegoalbuddy` instead. The update checker records the acquisition channel so npm-installed Claude skills do not recommend a native plugin update.
+To update just one tool, run `npx thegoalbuddy@latest update --target codex` or `npx thegoalbuddy@latest update --target claude`, then restart that tool. Recheck it with `doctor`. Using `@latest` fetches the current npm release before refreshing the integration; running an older cached or global executable only copies its older payload.
+
+Genuine Claude marketplace plugin installations use `/plugin update thegoalbuddy@thegoalbuddy` instead. The update checker records the acquisition channel so npm-installed Claude skills recommend npm updates.
 
 ## Live Boards
 
-thegoalbuddy opens a local board while the work is running, so you can see the plan, active task, receipts, subgoals, and verification status without digging through the chat.
+After Goal Prep creates a goal, run this in the same project’s terminal, replacing `<slug>` with the goal’s directory name:
+
+```bash
+npx thegoalbuddy@latest board docs/goals/<slug>
+```
+
+Keep the command running and open the URL it prints to see the plan, active task, receipts, subgoals, and verification status. Stop the viewer with Ctrl+C when finished; the goal files remain in the project.
 
 Multiple local boards reuse one readable `thegoalbuddy.localhost` hub with an in-header board switcher. On a local machine, share the printed URL as a clickable Markdown link. A cloud workspace's `127.0.0.1` or `.localhost` URL points to that workspace, so use the host's supported authenticated preview forwarding or attach screenshots for the user. Keep the board bound to loopback; it is a read-only local viewer. The viewer supports a constellation overview, task details, viewer preferences, and reduced-motion handling.
 
 Custom external integrations should be built as ordinary repo work with a concrete implementation plan, not installed from a thegoalbuddy catalog.
 
-See the [running changelog](CHANGELOG.md) for the complete release history. Version 0.5.0 is prepared as the first fork release; it has not been published. Earlier entries describe upstream releases.
+See the [running changelog](CHANGELOG.md) for the complete release history. Version 0.5.0 is the published first fork release. Earlier entries describe upstream releases.
 
 ## Good For
 
