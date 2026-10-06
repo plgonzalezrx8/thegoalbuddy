@@ -1,171 +1,114 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Goal Buddy OG Render</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700;850;900&family=Geist+Mono:wght@600;700&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1200" />
+    <title>thegoalbuddy · Observatory brand artwork</title>
     <style>
+      @font-face {
+        font-family: "Libre Caslon Display";
+        src: url("./libre-caslon-display.woff2") format("woff2");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("./dm-sans.woff2") format("woff2");
+        font-display: swap;
+      }
       * {
         box-sizing: border-box;
       }
-
-      html,
       body {
+        margin: 0;
         width: 1200px;
         height: 630px;
-        margin: 0;
         overflow: hidden;
-        color: #091128;
-        background:
-          linear-gradient(rgba(9, 17, 40, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(9, 17, 40, 0.05) 1px, transparent 1px),
-          radial-gradient(circle at 10% 6%, #d8f8ef, transparent 420px),
-          radial-gradient(circle at 90% 12%, #e7eeff, transparent 500px),
-          #fbfcff;
-        background-size: 72px 72px, 72px 72px, auto, auto, auto;
-        font-family: Geist, system-ui, sans-serif;
+        background: #040d15;
+        color: #f6f1e5;
+        font-family: "DM Sans", sans-serif;
       }
-
       main {
         position: relative;
-        width: 1200px;
-        height: 630px;
-        padding: 58px 70px;
+        width: 100%;
+        height: 100%;
+        padding: 54px 64px;
+        background:
+          linear-gradient(90deg, rgba(3, 13, 20, 0.92), rgba(3, 13, 20, 0.32)),
+          url("./observatory-sky.webp") center 70% / cover;
       }
-
       .brand {
         display: flex;
         align-items: center;
-        gap: 16px;
-        font-size: 31px;
-        font-weight: 850;
+        gap: 12px;
+        font-size: 30px;
+        font-weight: 650;
       }
-
       .brand img {
-        width: 74px;
-        height: 74px;
-        filter: drop-shadow(0 14px 20px rgba(67, 74, 190, 0.16));
+        width: 46px;
+        height: 46px;
       }
-
       .eyebrow {
-        margin: 52px 0 22px;
-        color: #4f46d8;
-        font-size: 17px;
-        font-weight: 850;
+        margin: 62px 0 20px;
+        font-size: 12px;
+        letter-spacing: 0.26em;
+        color: #b0bec7;
+        text-transform: uppercase;
       }
-
       h1 {
+        font:
+          90px/1.02 "Libre Caslon Display",
+          Georgia,
+          serif;
+        letter-spacing: -0.02em;
         margin: 0;
-        font-size: 68px;
-        line-height: 0.98;
-        font-weight: 900;
-        letter-spacing: 0;
+        max-width: 800px;
       }
-
-      p {
-        margin: 28px 0 0;
-        max-width: 520px;
-        color: #45516f;
-        font-size: 24px;
-        line-height: 1.38;
-        font-weight: 500;
-      }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        min-height: 58px;
-        margin-top: 36px;
-        padding: 0 34px;
-        color: #fff;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #07101f, #1b2550 70%, #2736a8);
-        box-shadow: 0 18px 42px rgba(52, 48, 117, 0.25);
-        font-family: "Geist Mono", monospace;
+      .description {
         font-size: 20px;
-        font-weight: 700;
+        color: #d9e5e8;
+        margin: 28px 0 0;
       }
-
-      .terminal {
+      .bottom {
         position: absolute;
-        right: 66px;
-        top: 106px;
-        width: 420px;
-        height: 338px;
-        overflow: hidden;
-        border-radius: 24px;
-        background: #07101f;
-        box-shadow: 0 30px 74px rgba(7, 16, 31, 0.3);
-      }
-
-      .bar {
+        left: 64px;
+        right: 64px;
+        bottom: 34px;
+        padding-top: 20px;
+        border-top: 1px solid #334957;
+        color: #b0bec7;
         display: flex;
-        gap: 10px;
-        height: 52px;
-        padding: 22px 24px;
-        border-bottom: 1px solid rgba(231, 236, 249, 0.12);
-        background: #101b2d;
+        justify-content: space-between;
+        font-size: 12px;
       }
-
-      .bar span {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-      }
-
-      .bar span:nth-child(1) { background: #ff6b66; }
-      .bar span:nth-child(2) { background: #ffc45b; }
-      .bar span:nth-child(3) { background: #58d878; }
-
-      pre {
-        margin: 0;
-        padding: 26px 30px;
-        color: #f6f8ff;
-        font-family: "Geist Mono", monospace;
-        font-size: 17px;
-        line-height: 1.45;
-        font-weight: 600;
-        white-space: pre-wrap;
-      }
-
-      em {
-        color: #78f29a;
-        font-style: normal;
-      }
-
-      .character {
+      .star {
         position: absolute;
-        right: 32px;
-        bottom: 18px;
-        width: 246px;
-        filter: drop-shadow(0 28px 32px rgba(67, 74, 190, 0.22));
+        right: 100px;
+        top: 190px;
+        width: 200px;
+        height: 200px;
+      }
+      .bottom strong {
+        color: #acf0a4;
+        font-weight: 400;
       }
     </style>
   </head>
   <body>
     <main>
       <div class="brand">
-        <img src="./goalbuddy-mark.png" alt="">
-        <span>Goal Buddy</span>
+        <img src="./constellation-star.png" alt="" />thegoalbuddy
       </div>
-      <div class="eyebrow">A /GOAL OS FOR CODEX &amp; CLAUDE CODE</div>
-      <h1>Give /goal<br>a best friend.</h1>
-      <p>Prepare goal.md for /goal in Codex and Claude Code. Keep state.yaml local and extensible.</p>
-      <div class="pill">npx goalbuddy</div>
-      <section class="terminal" aria-hidden="true">
-        <div class="bar"><span></span><span></span><span></span></div>
-        <pre>$npx goalbuddy
-$goal-prep
-
-<em>Prepared docs/goals/...</em>
-  goal.md
-  state.yaml
-
-/goal follow goal.md</pre>
-      </section>
-      <img class="character" src="./goalbuddy-character.png" alt="">
+      <p class="eyebrow">An observatory for your work</p>
+      <h1>Keep your goal<br />in sight.</h1>
+      <p class="description">
+        Your destination, current work, and proof of progress.
+      </p>
+      <img class="star" src="./constellation-star.png" alt="" />
+      <div class="bottom">
+        <span>Codex + Claude Code</span
+        ><strong>Local files · Lasting direction</strong
+        ><span>thegoalbuddy</span>
+      </div>
     </main>
   </body>
 </html>

@@ -1,189 +1,112 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <title>Goal Buddy README Hero Render</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700;850;900&family=Geist+Mono:wght@600;700&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1440" />
+    <title>thegoalbuddy · Observatory brand artwork</title>
     <style>
+      @font-face {
+        font-family: "Libre Caslon Display";
+        src: url("./libre-caslon-display.woff2") format("woff2");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("./dm-sans.woff2") format("woff2");
+        font-display: swap;
+      }
       * {
         box-sizing: border-box;
       }
-
-      html,
       body {
-        width: 1600px;
-        height: 900px;
         margin: 0;
+        width: 1440px;
+        height: 760px;
         overflow: hidden;
-        color: #091128;
-        background:
-          linear-gradient(rgba(9, 17, 40, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(9, 17, 40, 0.05) 1px, transparent 1px),
-          radial-gradient(circle at 10% 6%, #d8f8ef, transparent 520px),
-          radial-gradient(circle at 88% 10%, #e7eeff, transparent 620px),
-          #fbfcff;
-        background-size: 78px 78px, 78px 78px, auto, auto, auto;
-        font-family: Geist, system-ui, sans-serif;
+        background: #040d15;
+        color: #f6f1e5;
+        font-family: "DM Sans", sans-serif;
       }
-
       main {
         position: relative;
-        width: 1600px;
-        height: 900px;
-        padding: 76px 92px;
+        width: 100%;
+        height: 100%;
+        padding: 54px 64px;
+        background:
+          linear-gradient(90deg, rgba(3, 13, 20, 0.92), rgba(3, 13, 20, 0.32)),
+          url("./observatory-sky.webp") center 70% / cover;
       }
-
       .brand {
         display: flex;
         align-items: center;
-        gap: 18px;
-        font-size: 40px;
-        font-weight: 850;
-      }
-
-      .brand img {
-        width: 90px;
-        height: 90px;
-        filter: drop-shadow(0 18px 24px rgba(67, 74, 190, 0.16));
-      }
-
-      .eyebrow {
-        margin: 76px 0 28px;
-        color: #4f46d8;
-        font-size: 22px;
-        font-weight: 850;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 96px;
-        line-height: 0.98;
-        font-weight: 900;
-        letter-spacing: 0;
-      }
-
-      p {
-        margin: 34px 0 0;
-        max-width: 650px;
-        color: #45516f;
-        font-size: 32px;
-        line-height: 1.36;
-        font-weight: 500;
-      }
-
-      .actions {
-        display: flex;
-        gap: 28px;
-        margin-top: 54px;
-      }
-
-      .pill,
-      .secondary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 76px;
-        padding: 0 46px;
-        border-radius: 999px;
-        font-size: 27px;
-        font-weight: 850;
-      }
-
-      .pill {
-        color: #fff;
-        background: linear-gradient(135deg, #07101f, #1b2550 70%, #2736a8);
-        box-shadow: 0 22px 48px rgba(52, 48, 117, 0.25);
-        font-family: "Geist Mono", monospace;
-      }
-
-      .secondary {
-        border: 2px solid #dce3ef;
-        background: #fff;
-      }
-
-      .terminal {
-        position: absolute;
-        right: 72px;
-        top: 176px;
-        width: 560px;
-        height: 430px;
-        overflow: hidden;
-        border-radius: 30px;
-        background: #07101f;
-        box-shadow: 0 34px 82px rgba(7, 16, 31, 0.32);
-      }
-
-      .bar {
-        display: flex;
         gap: 12px;
-        height: 62px;
-        padding: 26px 34px;
-        border-bottom: 1px solid rgba(231, 236, 249, 0.12);
-        background: #101b2d;
+        font-size: 30px;
+        font-weight: 650;
       }
-
-      .bar span {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
+      .brand img {
+        width: 46px;
+        height: 46px;
       }
-
-      .bar span:nth-child(1) { background: #ff6b66; }
-      .bar span:nth-child(2) { background: #ffc45b; }
-      .bar span:nth-child(3) { background: #58d878; }
-
-      pre {
+      .eyebrow {
+        margin: 62px 0 20px;
+        font-size: 12px;
+        letter-spacing: 0.26em;
+        color: #b0bec7;
+        text-transform: uppercase;
+      }
+      h1 {
+        font:
+          90px/1.02 "Libre Caslon Display",
+          Georgia,
+          serif;
+        letter-spacing: -0.02em;
         margin: 0;
-        padding: 32px 40px;
-        color: #f6f8ff;
-        font-family: "Geist Mono", monospace;
-        font-size: 23px;
-        line-height: 1.42;
-        font-weight: 600;
-        white-space: pre-wrap;
+        max-width: 800px;
       }
-
-      em {
-        color: #78f29a;
-        font-style: normal;
+      .description {
+        font-size: 20px;
+        color: #d9e5e8;
+        margin: 28px 0 0;
       }
-
-      .character {
+      .bottom {
         position: absolute;
-        right: 28px;
-        bottom: 62px;
-        width: 374px;
-        filter: drop-shadow(0 34px 38px rgba(67, 74, 190, 0.22));
+        left: 64px;
+        right: 64px;
+        bottom: 34px;
+        padding-top: 20px;
+        border-top: 1px solid #334957;
+        color: #b0bec7;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+      }
+      .star {
+        position: absolute;
+        right: 100px;
+        top: 190px;
+        width: 200px;
+        height: 200px;
+      }
+      .bottom strong {
+        color: #acf0a4;
+        font-weight: 400;
       }
     </style>
   </head>
   <body>
     <main>
       <div class="brand">
-        <img src="./goalbuddy-mark.png" alt="">
-        <span>Goal Buddy</span>
+        <img src="./constellation-star.png" alt="" />thegoalbuddy
       </div>
-      <div class="eyebrow">A /GOAL OS FOR CODEX &amp; CLAUDE CODE</div>
-      <h1>Give /goal<br>a best friend.</h1>
-      <p>Prepare goal.md for /goal in Codex and Claude Code. Keep state.yaml local and extensible.</p>
-      <div class="actions">
-        <div class="pill">npx goalbuddy</div>
-        <div class="secondary">View GitHub</div>
+      <p class="eyebrow">An observatory for your work</p>
+      <h1>A constellation.<br />A clear destination.</h1>
+      <p class="description">A local observatory for long coding runs.</p>
+      <img class="star" src="./constellation-star.png" alt="" />
+      <div class="bottom">
+        <span>Codex + Claude Code</span
+        ><strong>Local files · Lasting direction</strong
+        ><span>thegoalbuddy</span>
       </div>
-      <section class="terminal" aria-hidden="true">
-        <div class="bar"><span></span><span></span><span></span></div>
-        <pre>$npx goalbuddy
-$goal-prep
-
-<em>Prepared docs/goals/...</em>
-  goal.md
-  state.yaml
-
-/goal follow goal.md</pre>
-      </section>
-      <img class="character" src="./goalbuddy-character.png" alt="">
     </main>
   </body>
 </html>

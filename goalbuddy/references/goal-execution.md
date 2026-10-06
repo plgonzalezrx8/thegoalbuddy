@@ -1,4 +1,4 @@
-# GoalBuddy Execution Contract
+# thegoalbuddy Execution Contract
 
 This document governs Codex `/goal` and Claude Code `/goalbuddy` runs: the execution mode. Board preparation (`$goal-prep` in Codex, `/goal-prep` in Claude Code) is governed by `SKILL.md` in this skill directory; do not mix the modes. Shared foundations, including the intake compiler, slice sizing policy, four primitives, control files, board schema, seed boards, and agent availability states, are defined in `SKILL.md` and apply here unchanged.
 
@@ -47,7 +47,7 @@ Rules for external dispatch:
 - The dispatcher renders the task prompt, runs the target CLI headless with role-appropriate sandboxing, extracts the returned `goalbuddy_receipt_v1`, and mechanically verifies write scope with git: worker changes must match `allowed_files`, and read-only roles must change nothing.
 - The dispatcher never edits `state.yaml`. The PM records the reported receipt verbatim — including its `harness` stamp — exactly as with any subagent receipt.
 - Do not mark a dispatched task `done` unless the dispatch report's scope check is clean and the receipt's verify commands pass. A scope violation means inspect the working tree, decide what to keep, and record a blocked receipt with the facts.
-- If the target CLI is missing, unauthenticated, returns a terminal error, is confirmed unavailable, or exceeds `--timeout`, fall back to the normal path: PM fallback or the required GoalBuddy agent, per the dispatch rules above. The external `--timeout` is a hard execution deadline, not an observation window: the dispatch invocation ends with a terminal failure and there is no native agent session to poll. Inspect the returned scope check and the working tree for partial writes before fallback. Use at least `--timeout 1200` for an external Claude Opus architecture review.
+- If the target CLI is missing, unauthenticated, returns a terminal error, is confirmed unavailable, or exceeds `--timeout`, fall back to the normal path: PM fallback or the required thegoalbuddy agent, per the dispatch rules above. The external `--timeout` is a hard execution deadline, not an observation window: the dispatch invocation ends with a terminal failure and there is no native agent session to poll. Inspect the returned scope check and the working tree for partial writes before fallback. Use at least `--timeout 1200` for an external Claude Opus architecture review.
 
 ## `/goal` Default Bias: Users Want Work Done
 
@@ -221,7 +221,7 @@ node <skill-path>/scripts/check-goal-state.mjs docs/goals/<slug>
 
 The checker accepts either the goal directory or the `state.yaml` path.
 
-If a local board server is running, compare `state.yaml` with `http://127.0.0.1:41737/<slug>/api/board` or `http://127.0.0.1:41737/api/boards`. Repair only GoalBuddy control files: `goal.md`, `state.yaml`, `notes/`, depth-1 `subgoals/`, and `.goalbuddy-board/`. Never edit product implementation files during board-health work unless there is an active Worker or PM task with explicit `allowed_files`.
+If a local board server is running, compare `state.yaml` with `http://127.0.0.1:41737/<slug>/api/board` or `http://127.0.0.1:41737/api/boards`. Repair only thegoalbuddy control files: `goal.md`, `state.yaml`, `notes/`, depth-1 `subgoals/`, and `.goalbuddy-board/`. Never edit product implementation files during board-health work unless there is an active Worker or PM task with explicit `allowed_files`.
 
 Board-health work should verify these truths: `active_task` matches live task status, done and blocked tasks have receipts, human-blocked work is in the blocked column, future work stays queued, and the live board/API reflects `state.yaml`.
 
@@ -237,7 +237,7 @@ I found [problem or suggestion].
 Should I:
 1. Create an issue in this repo for it? (Recommended) - [why]
 2. Prepare a PR for the fix/suggestion - [when this is better]
-3. Keep it only in the GoalBuddy board for now - [tradeoff]
+3. Keep it only in the thegoalbuddy board for now - [tradeoff]
 ```
 
 Use an issue for follow-up work, unclear scope, missing approval, or suggestions that need discussion. Use a PR when the fix is already implemented or safely implementable within the current approved scope. If neither is appropriate, propose a different path and record the decision in `state.yaml`.
@@ -298,7 +298,7 @@ Treat `reasoning_hint` as PM guidance. It does not override task scope, write pe
 
 Use `node <skill-path>/scripts/render-task-prompt.mjs docs/goals/<slug>` to render a compact prompt for the active task. The prompt includes only task-specific material, safe agent metadata, continuation warnings, and the expected receipt shape. It should not include broad chat history or dump the whole state file.
 
-When dispatching Codex subagents from a GoalBuddy prompt, the `required_spawn_agent_type` is mandatory. Use that exact `spawn_agent` `agent_type` (`goal_scout`, `goal_worker`, or `goal_judge`). Do not substitute generic `scout`, `worker`, or `judge` agents; if the required GoalBuddy agent is unavailable, stop spawning and continue as PM fallback or ask the operator to run the GoalBuddy CLI through their install channel with `agents` or `install`.
+When dispatching Codex subagents from a thegoalbuddy prompt, the `required_spawn_agent_type` is mandatory. Use that exact `spawn_agent` `agent_type` (`goal_scout`, `goal_worker`, or `goal_judge`). Do not substitute generic `scout`, `worker`, or `judge` agents; if the required thegoalbuddy agent is unavailable, stop spawning and continue as PM fallback or ask the operator to run the thegoalbuddy CLI through their install channel with `agents` or `install`.
 
 ### Native Codex Subagent Wait Contract
 
@@ -308,7 +308,7 @@ Scout and Judge are read-only, so file changes are never their progress signal. 
 
 At that boundary, send the agent one status request, tell the user that the bounded wait is escalating, and allow at most five more 60-second windows. A reply or other concrete execution evidence can justify continued observation. If all five windows expire with the agent still running but no reply or execution evidence, interrupt that exact agent, record bounded-wait exhaustion, and continue as PM fallback. A single observation timeout never justifies interruption or fallback. This native contract does not apply to the external dispatcher's hard `--timeout` deadline.
 
-When dispatching Claude Code subagents, the `required_claude_subagent_type` is mandatory. Use the Agent tool with that exact `subagent_type` (`goal-scout`, `goal-worker`, or `goal-judge`). Do not substitute `Explore`, `general-purpose`, or another generic agent: the named GoalBuddy agents carry the role prompt, tool limits, and receipt contract. If `state.yaml` records that agent as `unknown`, attempt the exact harness-specific agent once; `unknown` is not evidence that the agent is unavailable. Continue as PM fallback only after the harness reports that exact agent unavailable or returns an error. The `missing` and `bundled_not_installed` states retain the fallback behavior defined in `SKILL.md`.
+When dispatching Claude Code subagents, the `required_claude_subagent_type` is mandatory. Use the Agent tool with that exact `subagent_type` (`goal-scout`, `goal-worker`, or `goal-judge`). Do not substitute `Explore`, `general-purpose`, or another generic agent: the named thegoalbuddy agents carry the role prompt, tool limits, and receipt contract. If `state.yaml` records that agent as `unknown`, attempt the exact harness-specific agent once; `unknown` is not evidence that the agent is unavailable. Continue as PM fallback only after the harness reports that exact agent unavailable or returns an error. The `missing` and `bundled_not_installed` states retain the fallback behavior defined in `SKILL.md`.
 
 Use `node <skill-path>/scripts/parallel-plan.mjs docs/goals/<slug>` when the user explicitly asks for parallel agent work. It is read-only: it recommends safe Scout/Judge handoffs and Worker handoffs only when write scopes are known and disjoint. It does not mutate `state.yaml`, create sub-goals, apply receipts, or spawn agents.
 

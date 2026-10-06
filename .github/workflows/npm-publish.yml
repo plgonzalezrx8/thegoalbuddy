@@ -10,6 +10,9 @@ permissions:
 
 jobs:
   publish:
+    # Disabled until exact-source readiness and the tested artifact are delivered
+    # to this fresh runner. A release event alone must never authorize publishing.
+    if: ${{ false }}
     name: Publish to npm
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +27,11 @@ jobs:
 
       - name: Install trusted publishing npm
         run: npm install --global npm@11.18.0
+
+      - name: Install pinned development dependencies
+        env:
+          GOALBUDDY_SKIP_POSTINSTALL: "1"
+        run: npm ci --no-audit --no-fund
 
       - name: Show tool versions
         run: |
@@ -41,25 +49,21 @@ jobs:
             exit 1
           fi
 
-      - name: Verify package
-        run: |
-          npm run check
-          npm run pack:dry-run
+      - name: Verify npm identity and ownership
+        run: npm run publish:identity
 
       - name: Check npm publish status
         id: npm_status
+        run: npm run publish:status
+
+      - name: Verify package
         run: |
-          package_version="$(node -p "require('./package.json').version")"
-          published_version="$(npm view goalbuddy version 2>/dev/null || true)"
-          echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
-          echo "published_version=$published_version" >> "$GITHUB_OUTPUT"
-          if [ "$package_version" = "$published_version" ]; then
-            echo "already_published=true" >> "$GITHUB_OUTPUT"
-            echo "goalbuddy@$package_version is already published; skipping npm publish."
-          else
-            echo "already_published=false" >> "$GITHUB_OUTPUT"
-          fi
+          npm run check
+          node internal/cli/sync-skill-tree.mjs
+          npm run check:readiness -- --report "$THEGOALBUDDY_RELEASE_READINESS"
+          npm run check:package -- --tarball "$THEGOALBUDDY_TEST_TARBALL"
+          npm run publish:check
 
       - name: Publish
         if: steps.npm_status.outputs.already_published != 'true'
-        run: npm publish
+        run: npm publish "$THEGOALBUDDY_TEST_TARBALL"

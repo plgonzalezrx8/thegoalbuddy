@@ -1,13 +1,15 @@
 ---
 name: goal-prep
-description: Goal Prep for GoalBuddy. Use for broad, long-running, stalled, vague, detailed, planned, or unhealthy Codex or Claude Code work that needs a structured /goal intake, autonomous task discovery, role-tagged Scout/Judge/Worker delegation, one active task, durable receipts, and a PM-owned rolling board that maximizes the chance of a successful goal run.
+description: Goal Prep for thegoalbuddy. Use for broad, long-running, stalled, vague, detailed, planned, or unhealthy Codex or Claude Code work that needs a structured /goal intake, autonomous task discovery, role-tagged Scout/Judge/Worker delegation, one active task, durable receipts, and a PM-owned rolling board that maximizes the chance of a successful goal run.
 ---
 
 # Goal Prep
 
-`$goal-prep` (Codex) or `/goal-prep` (Claude Code) prepares a GoalBuddy board. It does not start execution automatically, but the board and harness-specific starter command must be shaped so the next run continues into safe execution by default.
+**thegoalbuddy · Keep your goal in sight.** Start a goal, resume existing work, or unblock the next step using local files and recorded evidence. The constellation board is a read-only observatory; execution happens in your coding tool.
 
-GoalBuddy is for autonomous, long-running Codex or Claude Code work where the PM thread may need to discover the work, define tasks, sequence them, delegate them, execute them, verify them, and keep going without the human decomposing every step.
+`$goal-prep` (Codex) or `/goal-prep` (Claude Code) prepares a thegoalbuddy board. It does not start execution automatically, but the board and harness-specific starter command must be shaped so the next run continues into safe execution by default.
+
+thegoalbuddy is for autonomous, long-running Codex or Claude Code work where the PM thread may need to discover the work, define tasks, sequence them, delegate them, execute them, verify them, and keep going without the human decomposing every step.
 
 The loop is:
 
@@ -15,7 +17,7 @@ The loop is:
 raw user intent -> intake compiler -> goal oracle -> local work surface -> one active task -> receipt -> proof loop -> repeat
 ```
 
-GoalBuddy's core invariant is:
+thegoalbuddy's core invariant is:
 
 ```text
 Intent -> Oracle -> Surface -> Loop -> Proof
@@ -38,20 +40,24 @@ During a `$goal-prep` turn, do not perform the user's requested work, even if th
 
 Allowed `$goal-prep` actions:
 
-- run the bundled GoalBuddy update checker and mention a newer version if one is available;
+- run the bundled thegoalbuddy update checker and mention a newer version if one is available;
 - ask diagnostic intake questions and wait when required;
 - create or repair only `docs/goals/<slug>/goal.md`, `docs/goals/<slug>/state.yaml`, `docs/goals/<slug>/notes/`, and the generated `.goalbuddy-board/` visual board artifact;
-- create and open the built-in local GoalBuddy board surface for the goal unless the user opts out;
-- optionally run the GoalBuddy board checker against that `state.yaml`;
-- verify GoalBuddy agent availability, if this can be done without touching implementation work, and record `installed`, `bundled_not_installed`, `missing`, or `unknown` truthfully;
+- create and open the built-in local thegoalbuddy board surface for the goal unless the user opts out;
+- optionally run the thegoalbuddy board checker against that `state.yaml`;
+- verify thegoalbuddy agent availability, if this can be done without touching implementation work, and record `installed`, `bundled_not_installed`, `missing`, or `unknown` truthfully;
 - print both exact execution commands: Codex `/goal Follow docs/goals/<slug>/goal.md.` and Claude Code `/goalbuddy Follow docs/goals/<slug>/goal.md.`;
 - ask whether to start execution, refine the board, or stop.
 
 If the prompt names another skill or tool, such as "use the taste skill", "refresh the taste skill", "look at this repo", "use browser", or "generate assets", record that requirement in the charter and seed tasks. Do not load that skill, browse that repo, or generate those assets during `$goal-prep`.
 
+## Bundled Runtime
+
+The skill ships generated JavaScript runtime from maintained TypeScript sources. Invoke the existing `.mjs` scripts with plain Node 18 or later; installed users do not need TypeScript, build tools, or development dependencies. Contributors edit the canonical TypeScript sources and regenerate the plugin mirror from the repository.
+
 ## Update Check
 
-At the start of a `$goal-prep` turn, check whether GoalBuddy itself is stale. Run the bundled checker from the installed skill directory when available:
+At the start of a `$goal-prep` turn, check whether thegoalbuddy itself is stale. Run the bundled checker from the installed skill directory when available:
 
 ```bash
 node <skill-path>/scripts/check-update.mjs --json
@@ -60,7 +66,7 @@ node <skill-path>/scripts/check-update.mjs --json
 If the checker reports `update_available: true`, tell the user once before continuing:
 
 ```text
-GoalBuddy <latest_version> is available. After this turn, update through the channel that installed GoalBuddy: `/plugin update goalbuddy@goalbuddy`, `npx goalbuddy@latest`, `npm i -g goalbuddy`, `pnpm update -g goalbuddy`, `bun update -g goalbuddy`, or `mise upgrade npm:goalbuddy`.
+thegoalbuddy <latest_version> is available. After this turn, update through the channel that installed thegoalbuddy: `/plugin update thegoalbuddy@thegoalbuddy`, `npx thegoalbuddy@latest`, `npm i -g thegoalbuddy`, `pnpm update -g thegoalbuddy`, `bun update -g thegoalbuddy`, or `mise upgrade npm:thegoalbuddy`.
 ```
 
 Do not block intake or board creation on update checking. If the checker is missing, cannot find npm, or network access fails, continue silently unless the user asked about updates.
@@ -84,10 +90,10 @@ Extract:
 - blind spots: important risks, choices, or success dimensions the user may not have named yet;
 - existing plan facts: user-provided steps, files, constraints, or sequencing that must be preserved but still validated.
 
-Use the local GoalBuddy board as the default work surface for broad GoalBuddy runs. Ask only when the user has not already implied they want the default local surface, the goal is unusually quick/private, or board setup would materially distract from the requested prep:
+Use the local thegoalbuddy board as the default work surface for broad thegoalbuddy runs. Ask only when the user has not already implied they want the default local surface, the goal is unusually quick/private, or board setup would materially distract from the requested prep:
 
 ```text
-Do you want the local GoalBuddy board for this goal?
+Do you want the local thegoalbuddy board for this goal?
 ```
 
 Recommended options:
@@ -95,11 +101,13 @@ Recommended options:
 1. Local live board (Recommended) - starts immediately, requires no credentials, and lets the user watch tasks populate inside Codex or Claude Code.
 2. No visual board - best for quick or private goals where the file board is enough.
 
-If the user chooses the local live board, create the goal directory, `notes/`, and an initial minimal `state.yaml` as soon as the slug is known, then run `node <skill-path>/surfaces/local-goal-board/scripts/local-goal-board.mjs --goal docs/goals/<slug>` and open the printed local URL in the AI coding agent's in-app browser (the Codex in-app Browser, the Claude Code preview, or the user's regular browser). The default local hub is `http://goalbuddy.localhost:41737/`, and board URLs normally look like `http://goalbuddy.localhost:41737/<slug>/`. In short: start the local board before filling the task list so the board pops up right away and cards populate live as `state.yaml` changes. Include the printed board URL in the final prep response as an actual clickable Markdown link, for example `[Open GoalBuddy board](http://goalbuddy.localhost:41737/<slug>/)`. Do not put the board URL only in a code block, quote, HTML comment, or prose that the UI cannot click.
+If the user chooses the local live board, create the goal directory, `notes/`, and an initial minimal `state.yaml` as soon as the slug is known, then run `node <skill-path>/surfaces/local-goal-board/scripts/local-goal-board.mjs --goal docs/goals/<slug>` and open the printed local URL in the AI coding agent's in-app browser (the Codex in-app Browser, the Claude Code preview, or the user's regular browser). The default local hub is `http://thegoalbuddy.localhost:41737/`, and board URLs normally look like `http://thegoalbuddy.localhost:41737/<slug>/`. In short: start the local board before filling the task list so the board pops up right away and cards populate live as `state.yaml` changes. Include the printed board URL in the final prep response as an actual clickable Markdown link, for example `[Open thegoalbuddy board](http://thegoalbuddy.localhost:41737/<slug>/)`. Do not put the board URL only in a code block, quote, HTML comment, or prose that the UI cannot click.
 
-If `http://goalbuddy.localhost:41737/<slug>/` returns 404, do not assume the existing process is stale and do not stop it. First check `http://127.0.0.1:41737/api/boards`. If that endpoint returns board JSON, the port is the shared multi-board hub; rerun `node <skill-path>/surfaces/local-goal-board/scripts/local-goal-board.mjs --goal <absolute-goal-path>` if needed so the new goal registers on the same port. Only stop a specific process on 41737 when `/api/boards` is missing, returns 404, or otherwise proves the listener is not a current GoalBuddy multi-board hub.
+For a cloud workspace, open the local board within the workspace for inspection, but provide the user with screenshots or the host's supported authenticated preview forwarding. Do not present a cloud-only `127.0.0.1` or `.localhost` link as a user-accessible preview. Keep loopback binding; do not expose the server publicly to make the link work.
 
-If the user wants an external board, GitHub sync, Slack digest, Linear handoff, or any other custom integration, do not install a GoalBuddy catalog item. Treat it as normal implementation work: create a concrete task that designs and verifies that integration inside the target repo or asks the operator for the required credentials and scope.
+If `http://thegoalbuddy.localhost:41737/<slug>/` returns 404, do not assume the existing process is stale and do not stop it. First check `http://127.0.0.1:41737/api/boards`. If that endpoint returns board JSON, the port is the shared multi-board hub; rerun `node <skill-path>/surfaces/local-goal-board/scripts/local-goal-board.mjs --goal <absolute-goal-path>` if needed so the new goal registers on the same port. Only stop a specific process on 41737 when `/api/boards` is missing, returns 404, or otherwise proves the listener is not a current thegoalbuddy multi-board hub.
+
+If the user wants an external board, GitHub sync, Slack digest, Linear handoff, or any other custom integration, do not install a thegoalbuddy catalog item. Treat it as normal implementation work: create a concrete task that designs and verifies that integration inside the target repo or asks the operator for the required credentials and scope.
 
 Ask before board creation when the request is vague, strategic, improvement-oriented, or open-ended and the user has not explicitly said to use defaults. Ask one guided question at a time with 2-3 options and a recommended default, then wait. Continue the diagnostic intake until the user's answers are sufficient to choose the board shape. Do not create or repair `docs/goals/<slug>/` until the diagnostic intake is complete or the user explicitly accepts defaults.
 
@@ -146,7 +154,7 @@ Stop after each question. Do not create files, repair an existing board, run che
 
 Minimum diagnostic ladder for vague, strategic, or improvement-oriented goals:
 
-1. Goal surface: use the local live board by default, or ask "Do you want the local GoalBuddy board for this goal?" when board handling is unresolved.
+1. Goal surface: use the local live board by default, or ask "Do you want the local thegoalbuddy board for this goal?" when board handling is unresolved.
 2. Intent target: what kind of improvement or outcome matters most?
 3. Success proof: what evidence would convince the user this worked?
 4. Scope and non-goals: what should remain untouched or explicitly out of scope?
@@ -154,7 +162,7 @@ Minimum diagnostic ladder for vague, strategic, or improvement-oriented goals:
 
 Ask these one at a time. Skip a step only when the user's words already answer it clearly. After the user answers one step, do not assume the remaining steps; ask the next unresolved material question.
 
-For "make GoalBuddy better", a good first question is which improvement target matters most: intake clarity, board/execution reliability, completion proof/eval coverage, or user experience during long-running goals. A good second question asks what proof would convince the user it improved. A good third question asks whether to reuse an existing goal, create a fresh goal, or inspect first.
+For "make thegoalbuddy better", a good first question is which improvement target matters most: intake clarity, board/execution reliability, completion proof/eval coverage, or user experience during long-running goals. A good second question asks what proof would convince the user it improved. A good third question asks whether to reuse an existing goal, create a fresh goal, or inspect first.
 
 ## What `$goal-prep` Does
 
@@ -162,7 +170,7 @@ When invoked directly, run intake first. For vague, strategic, improvement-orien
 
 Do:
 
-- check for a newer GoalBuddy version once at the start and mention it without blocking;
+- check for a newer thegoalbuddy version once at the start and mention it without blocking;
 - clarify or infer the goal title and slug;
 - run the Intake Compiler;
 - ask diagnostic intake questions when clarity would materially improve the board;
@@ -210,7 +218,7 @@ Tiny tasks are allowed when the failure is isolated, the risk is high, the scope
 
 Use this skill for goals that are broad, multi-hour, ambiguous, high-risk, already planned, already stale, already red, or likely to need Scout/Judge/Worker delegation.
 
-For a one-change task, do not create a GoalBuddy board.
+For a one-change task, do not create a thegoalbuddy board.
 
 If the user explicitly invokes `$goal-prep` on a one-change task anyway, ask one guided question offering the direct change without a board (Recommended) or a minimal board. If the user has already said to proceed or use defaults, prepare the smallest valid board and note the tradeoff in the prep response.
 
@@ -357,16 +365,16 @@ If the goal is audit, keep the active task read-only. Queue execution only if th
 
 ## Agents
 
-Scout, Worker, and Judge templates are bundled with GoalBuddy as Codex `goal_*.toml` files and Claude Code `goal-*.md` files. They may also be installed as user or project agent configs, but a board must not claim `installed` unless the preparer verified the matching agent files.
+Scout, Worker, and Judge templates are bundled with thegoalbuddy as Codex `goal_*.toml` files and Claude Code `goal-*.md` files. They may also be installed as user or project agent configs, but a board must not claim `installed` unless the preparer verified the matching agent files.
 
 Use these `state.yaml` values:
 
 | State | Meaning | Next action |
 |---|---|---|
 | `installed` | Matching Scout/Worker/Judge agent configs were found in the expected user or project agent location. | Continue. |
-| `bundled_not_installed` | A bundled Codex `goal_*.toml` or Claude Code `goal-*.md` template exists, but no matching installed agent config was verified. | `/goal` can proceed through PM fallback. If dedicated agents are required before `/goal`, run the GoalBuddy CLI through the user's install channel with `agents`. |
-| `missing` | Neither an installed config nor the bundled template was verified. | `/goal` can proceed through PM fallback. If dedicated agents are required before `/goal`, run the GoalBuddy CLI through the user's install channel with `install`. |
-| `unknown` | Agent availability could not be checked. | `/goal` must attempt the exact harness-specific GoalBuddy agent once. Use PM fallback only after the harness reports that exact agent unavailable or returns an error. To check before `/goal`, run the GoalBuddy CLI through the user's install channel with `doctor`. |
+| `bundled_not_installed` | A bundled Codex `goal_*.toml` or Claude Code `goal-*.md` template exists, but no matching installed agent config was verified. | `/goal` can proceed through PM fallback. If dedicated agents are required before `/goal`, run the thegoalbuddy CLI through the user's install channel with `agents`. |
+| `missing` | Neither an installed config nor the bundled template was verified. | `/goal` can proceed through PM fallback. If dedicated agents are required before `/goal`, run the thegoalbuddy CLI through the user's install channel with `install`. |
+| `unknown` | Agent availability could not be checked. | `/goal` must attempt the exact harness-specific thegoalbuddy agent once. Use PM fallback only after the harness reports that exact agent unavailable or returns an error. To check before `/goal`, run the thegoalbuddy CLI through the user's install channel with `doctor`. |
 
 Non-`installed` states are warnings, not false failures, because the main `/goal` PM can perform Scout/Judge/Worker-shaped tasks directly when dedicated agents are unavailable.
 

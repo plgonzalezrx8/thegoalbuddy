@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
-  <title id="title">GoalBuddy icon</title>
+  <title id="title">thegoalbuddy icon</title>
   <desc id="desc">A blue rounded square with a white checkmark and board columns.</desc>
   <rect width="64" height="64" rx="14" fill="#2563EB"/>
   <path d="M18 18h28a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V22a4 4 0 0 1 4-4Z" fill="#FFFFFF" opacity=".16"/>

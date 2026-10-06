@@ -1,4 +1,4 @@
-# Optional Codex config snippet for GoalBuddy subagent runs.
+# Optional Codex config snippet for thegoalbuddy subagent runs.
 [agents]
 max_threads = 4
 max_depth = 1

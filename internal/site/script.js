@@ -1,116 +1,67 @@
-if (window.lucide) {
-  window.lucide.createIcons();
-}
-
-// Scroll-reveal entrance animations. Elements are pre-hidden via the `.js-anim`
-// class (set in <head>); reveal them as they enter the viewport.
-const revealEls = document.querySelectorAll("[data-animate], [data-stagger]");
-if (revealEls.length) {
-  if ("IntersectionObserver" in window) {
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
-    );
-    revealEls.forEach((el) => revealObserver.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add("is-visible"));
-  }
-}
-
-const toast = document.createElement("div");
-toast.className = "copy-toast";
-toast.setAttribute("role", "status");
-toast.setAttribute("aria-live", "polite");
-document.body.append(toast);
-
+// Generated from internal/site/script.ts; do not edit.
+const toast = document.querySelector(".copy-toast");
 let toastTimer;
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 1700);
+function announce(message) {
+    if (!(toast instanceof HTMLElement))
+        return;
+    toast.textContent = message;
+    toast.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 3500);
 }
-
 async function copyText(value) {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(value);
-    return;
-  }
-
-  const field = document.createElement("textarea");
-  field.value = value;
-  field.setAttribute("readonly", "");
-  field.style.position = "fixed";
-  field.style.opacity = "0";
-  document.body.append(field);
-  field.select();
-  const copied = document.execCommand("copy");
-  field.remove();
-  if (!copied) throw new Error("Copy command failed");
-}
-
-document.querySelectorAll("[data-copy]").forEach((button) => {
-  button.addEventListener("click", async (event) => {
-    event.preventDefault();
-
-    const value = button.getAttribute("data-copy");
-    const label = button.querySelector("span");
-    const original = label ? label.textContent : "";
-    const toastMessage = button.getAttribute("data-copy-toast") || `Copied ${value}`;
-
-    try {
-      await copyText(value);
-      showToast(toastMessage);
-      if (button.classList.contains("copy-command") && label) {
-        label.textContent = "Copied";
-        window.setTimeout(() => {
-          label.textContent = original;
-        }, 1400);
-      }
-    } catch {
-      showToast("Copy failed");
-      if (button.classList.contains("copy-command") && label) {
-        label.textContent = "Select";
-        window.setTimeout(() => {
-          label.textContent = original;
-        }, 1400);
-      }
+    if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        return;
     }
-  });
-});
-
-const starCount = document.querySelector("[data-github-stars]");
-
-function formatStars(count) {
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k`;
-  }
-  return String(count);
+    const previousFocus = document.activeElement;
+    const field = document.createElement("textarea");
+    field.value = value;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.opacity = "0";
+    document.body.append(field);
+    field.select();
+    try {
+        if (!document.execCommand("copy"))
+            throw new Error("Clipboard unavailable");
+    }
+    finally {
+        field.remove();
+        if (previousFocus instanceof HTMLElement)
+            previousFocus.focus({ preventScroll: true });
+    }
 }
-
-async function loadGithubStars() {
-  if (!starCount) return;
-
-  try {
-    const response = await fetch("https://api.github.com/repos/tolimarchuk/goalbuddy", {
-      headers: { Accept: "application/vnd.github+json" },
+for (const button of document.querySelectorAll("[data-copy]")) {
+    if (!(button instanceof HTMLButtonElement))
+        continue;
+    button.addEventListener("click", async () => {
+        const value = button.dataset.copy;
+        if (button.disabled || value === undefined)
+            return;
+        const previousFocus = document.activeElement;
+        button.disabled = true;
+        const label = button.querySelector("span");
+        try {
+            await copyText(value);
+            announce("Command copied. Paste it into your repository terminal.");
+            if (label instanceof HTMLElement)
+                label.textContent = "Copied";
+        }
+        catch {
+            announce("Could not copy. Select the command text and copy it manually.");
+            if (label instanceof HTMLElement)
+                label.textContent = "Select text";
+        }
+        finally {
+            button.disabled = false;
+            if (previousFocus instanceof HTMLElement)
+                previousFocus.focus({ preventScroll: true });
+            setTimeout(() => {
+                if (label instanceof HTMLElement)
+                    label.textContent = "Copy";
+            }, 2500);
+        }
     });
-    if (!response.ok) throw new Error("GitHub API unavailable");
-    const repo = await response.json();
-    starCount.textContent = `${formatStars(repo.stargazers_count)} stars`;
-  } catch {
-    starCount.textContent = "GitHub";
-  }
 }
-
-loadGithubStars();
+export {};

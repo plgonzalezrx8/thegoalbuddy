@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "module": "NodeNext", "moduleResolution": "NodeNext", "lib": ["ES2022"], "types": ["node"], "outDir": ".build/tools" },
+  "include": ["internal/build/**/*.mts"],
+  "exclude": ["internal/build/browser-qa.mts"]
+}

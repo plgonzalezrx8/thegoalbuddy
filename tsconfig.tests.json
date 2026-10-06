@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "module": "NodeNext", "moduleResolution": "NodeNext", "lib": ["ES2022", "DOM", "DOM.Iterable"], "types": ["node"], "outDir": ".build/tests" },
+  "include": ["internal/test/**/*.mts", "goalbuddy/surfaces/local-goal-board/test/**/*.mts", "internal/cli/**/*.mts", "goalbuddy/scripts/**/*.mts", "goalbuddy/surfaces/local-goal-board/scripts/**/*.mts", "goalbuddy/surfaces/local-goal-board/ui/**/*.ts", "goalbuddy/types/**/*.ts", "internal/build/**/*.mts"]
+}

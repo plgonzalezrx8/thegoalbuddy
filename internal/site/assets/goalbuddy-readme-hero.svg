@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">Goal Buddy README hero</title>
-  <desc id="desc">A polished Goal Buddy hero image for GitHub README.</desc>
+  <title id="title">thegoalbuddy README hero</title>
+  <desc id="desc">A polished thegoalbuddy hero image for GitHub README.</desc>
   <defs>
     <radialGradient id="bgMint" cx="8%" cy="8%" r="74%">
       <stop offset="0" stop-color="#d8f8ef"/>
@@ -49,7 +49,7 @@
       <ellipse cx="278" cy="314" rx="27" ry="16" fill="#ffaec4" opacity=".9"/>
       <ellipse cx="529" cy="314" rx="27" ry="16" fill="#ffaec4" opacity=".9"/>
     </g>
-    <text x="118" y="32" fill="#091128" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="40" font-weight="850">Goal Buddy</text>
+    <text x="118" y="32" fill="#091128" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="40" font-weight="850">thegoalbuddy</text>
   </g>
 
   <text x="96" y="224" fill="#4f46d8" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="22" font-weight="850">OPEN SOURCE CODEX /GOAL COMPANION</text>
@@ -58,7 +58,7 @@
   <text x="102" y="536" fill="#45516f" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="31" font-weight="500">Prepare goal.md for Codex /goal.</text>
   <text x="102" y="582" fill="#45516f" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="31" font-weight="500">Keep state.yaml local and extensible.</text>
   <rect x="102" y="686" width="338" height="76" rx="38" fill="url(#darkButton)"/>
-  <text x="156" y="734" fill="#ffffff" font-family="Geist Mono, Menlo, monospace" font-size="27" font-weight="700">npx goalbuddy</text>
+  <text x="156" y="734" fill="#ffffff" font-family="Geist Mono, Menlo, monospace" font-size="27" font-weight="700">npx thegoalbuddy</text>
   <rect x="468" y="686" width="270" height="76" rx="38" fill="#ffffff" stroke="#e3e8f2" stroke-width="2"/>
   <text x="538" y="734" fill="#091128" font-family="Geist, Avenir Next, Arial, sans-serif" font-size="27" font-weight="850">View GitHub</text>
 
@@ -68,7 +68,7 @@
     <circle cx="40" cy="31" r="9" fill="#ff6b66"/>
     <circle cx="69" cy="31" r="9" fill="#ffc45b"/>
     <circle cx="98" cy="31" r="9" fill="#58d878"/>
-    <text x="44" y="124" fill="#f6f8ff" font-family="Geist Mono, Menlo, monospace" font-size="23" font-weight="600">$ npx goalbuddy</text>
+    <text x="44" y="124" fill="#f6f8ff" font-family="Geist Mono, Menlo, monospace" font-size="23" font-weight="600">$ npx thegoalbuddy</text>
     <text x="44" y="176" fill="#78f29a" font-family="Geist Mono, Menlo, monospace" font-size="23" font-weight="600">Prepared docs/goals/improve-project/</text>
     <text x="76" y="224" fill="#f6f8ff" font-family="Geist Mono, Menlo, monospace" font-size="21">goal.md</text>
     <text x="76" y="260" fill="#f6f8ff" font-family="Geist Mono, Menlo, monospace" font-size="21">state.yaml</text>

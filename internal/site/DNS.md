@@ -1,47 +1,32 @@
-# goalbuddy.dev DNS
+# thegoalbuddy website on Sites
 
-GitHub Pages is configured for:
+The canonical website source lives in `internal/site/` in this repository. Sites hosts a reproducible static export on its assigned Codex subdomain. No custom domain has been purchased; domain purchase and DNS configuration are deferred.
 
-- Repository: `tolimarchuk/goalbuddy`
-- Pages build type: GitHub Actions workflow
-- Custom domain: `goalbuddy.dev`
-- Published artifact path: `internal/site`
+Current website origin: **https://thegoalbuddy.pete-nektarios.chatgpt.site**. Use the exact URL returned by Sites before deployment or final verification. Do not guess a subdomain or retain the former GitHub Pages URL in active metadata. GitHub Pages deployment has been retired.
 
-Cloudflare is authoritative for `goalbuddy.dev`:
+## Build and export
 
-```text
-serena.ns.cloudflare.com
-will.ns.cloudflare.com
-```
-
-Required Cloudflare DNS records for the apex domain:
-
-```text
-Type  Name  Content
-A     @     185.199.108.153
-A     @     185.199.109.153
-A     @     185.199.110.153
-A     @     185.199.111.153
-AAAA  @     2606:50c0:8000::153
-AAAA  @     2606:50c0:8001::153
-AAAA  @     2606:50c0:8002::153
-AAAA  @     2606:50c0:8003::153
-```
-
-Recommended `www` redirect support:
-
-```text
-Type   Name  Content
-CNAME  www   tolimarchuk.github.io
-```
-
-After DNS resolves, re-check:
+From a prepared TypeScript development checkout:
 
 ```bash
-dig goalbuddy.dev +noall +answer -t A
-dig goalbuddy.dev +noall +answer -t AAAA
-dig www.goalbuddy.dev +nostats +nocomments +nocmd
-curl -I https://goalbuddy.dev/
+npm run typecheck
+npm run check:branding
+npm run check:site
+npm run build:site
 ```
 
-Then enforce HTTPS in GitHub Pages once the certificate is issued.
+`npm run build:site` produces `dist/` from maintained HTML, CSS, assets, and generated browser runtime. The export must contain no goals, npm credentials, tests, development tools, or release evidence. Self-hosted fonts retain their SIL Open Font License files. The marketing website is independent of the loopback goal board; it does not host or store local goal files.
+
+## Sites identity and deployment
+
+Use a dedicated deployment checkout at `/workspace/sites/thegoalbuddy`. It records an export from this repository, not another maintained website implementation. Record the originating thegoalbuddy revision and the export's Sites source commit.
+
+Read `.openai/hosting.json` in that checkout first. Reuse its exact `project_id` when present; otherwise create one Site and persist the returned ID immediately. Its static configuration uses `static.directory: "dist"`. Preserve the chosen audience; new Sites remain owner-private unless the owner explicitly chooses public access.
+
+Prefer Sites' supported source helper with its native version/deployment tools. This executor could not run the packaged source helper, so `internal/build/site-workflow.mts` supplies an explicitly recorded portable TypeScript adapter using native Git and the connector's source/commit/archive contract; it does not claim the packaged helper ran. Keep source credentials in session memory and send them through hidden stdin. Save the exact source version before deploying; retain its project, source commit, version, and deployment IDs. A successful local build is not hosted verification.
+
+Use Sites' returned origin for the canonical URL, Open Graph URL/image, social image, README website link, and package homepage. Rebuild after those changes. Verify the terminal hosted deployment at its literal URL, including assets, metadata, navigation, clipboard success and denial, desktop/mobile layouts, keyboard access, and reduced motion for the intended audience. Required checks that cannot be performed remain explicit blockers before final npm packaging.
+
+## Future custom domain
+
+When the owner purchases a domain, use Sites' supported domain configuration, verify ownership and HTTPS, then update canonical/social metadata and links together. Do not add a GitHub Pages CNAME or use an upstream domain. Hosting a website does not authorize npm publication; that remains the final, explicitly authorized release step.

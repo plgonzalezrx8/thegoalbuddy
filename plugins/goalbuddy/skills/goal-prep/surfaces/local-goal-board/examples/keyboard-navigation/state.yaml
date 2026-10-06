@@ -1,0 +1,71 @@
+version: 2
+goal:
+  title: "Make keyboard navigation dependable."
+  slug: keyboard-navigation
+  kind: specific
+  tranche: "Make every dialog usable with a keyboard."
+  status: active
+  oracle:
+    signal: "Every dialog works with Tab, Shift+Tab and Escape."
+    cadence: "After implementation and at final review"
+    final_proof: "A recorded keyboard walkthrough plus passing browser checks for every dialog."
+  intake:
+    original_request: "Make keyboard navigation dependable."
+    interpreted_outcome: "Every dialog works with a keyboard."
+    completion_proof: "Recorded walkthrough and browser checks."
+agents:
+  scout: bundled_not_installed
+  worker: bundled_not_installed
+  judge: bundled_not_installed
+active_task: T002
+tasks:
+  - id: T001
+    type: scout
+    assignee: Scout
+    status: done
+    title: "Map focus behavior"
+    objective: "Map focus entry, order and restoration across every dialog."
+    receipt:
+      result: done
+      summary: "Mapped the current focus order."
+      evidence:
+        - notes/focus-audit.md
+      note: notes/focus-audit.md
+  - id: T002
+    type: worker
+    assignee: Worker
+    status: active
+    title: "Build keyboard loop"
+    objective: "Implement focus entry, Tab and Shift+Tab confinement, and focus restoration."
+    update: "Focus now enters the dialog."
+    allowed_files:
+      - src/dialog.js
+      - tests/keyboard.test.js
+    verify:
+      - "npm run test:keyboard"
+    stop_if:
+      - "Dialog behavior is ambiguous."
+    receipt: null
+  - id: T003
+    type: judge
+    assignee: Judge
+    status: blocked
+    title: "Confirm Escape behavior"
+    objective: "Decide the Escape behavior for nested dialogs."
+    next_action: "Provide the decision in your coding tool."
+    receipt:
+      result: blocked
+      summary: "Should Escape close the nested dialog or both dialogs?"
+  - id: T004
+    type: judge
+    assignee: Judge
+    status: queued
+    title: "Verify keyboard flows"
+    objective: "Verify all dialogs with Tab, Shift+Tab and Escape against the completion criteria."
+    receipt: null
+checks:
+  dirty_fingerprint: unknown
+  last_verification:
+    result: unknown
+    task: null
+    commands: []

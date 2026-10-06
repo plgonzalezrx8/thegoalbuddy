@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "source": "goalbuddy/scripts/apply-receipt.mts",
+      "output": "goalbuddy/scripts/apply-receipt.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/check-can-stop.mts",
+      "output": "goalbuddy/scripts/check-can-stop.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/check-goal-state.mts",
+      "output": "goalbuddy/scripts/check-goal-state.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/check-update.mts",
+      "output": "goalbuddy/scripts/check-update.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/dispatch-task.mts",
+      "output": "goalbuddy/scripts/dispatch-task.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/install-agents.mts",
+      "output": "goalbuddy/scripts/install-agents.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/install-channel.mts",
+      "output": "goalbuddy/scripts/install-channel.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/parallel-plan.mts",
+      "output": "goalbuddy/scripts/parallel-plan.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/receipt-provenance.mts",
+      "output": "goalbuddy/scripts/receipt-provenance.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/render-task-prompt.mts",
+      "output": "goalbuddy/scripts/render-task-prompt.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/scripts/value.mts",
+      "output": "goalbuddy/scripts/value.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/surfaces/local-goal-board/scripts/lib/goal-board.mts",
+      "output": "goalbuddy/surfaces/local-goal-board/scripts/lib/goal-board.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/surfaces/local-goal-board/scripts/local-goal-board.mts",
+      "output": "goalbuddy/surfaces/local-goal-board/scripts/local-goal-board.mjs",
+      "project": "node"
+    },
+    {
+      "source": "goalbuddy/surfaces/local-goal-board/ui/app.ts",
+      "output": "goalbuddy/surfaces/local-goal-board/ui/app.js",
+      "project": "browser"
+    },
+    {
+      "source": "goalbuddy/surfaces/local-goal-board/ui/constellation.ts",
+      "output": "goalbuddy/surfaces/local-goal-board/ui/constellation.js",
+      "project": "browser"
+    },
+    {
+      "source": "internal/cli/check-package.mts",
+      "output": "internal/cli/check-package.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/check-publish-identity.mts",
+      "output": "internal/cli/check-publish-identity.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/check-publish-status.mts",
+      "output": "internal/cli/check-publish-status.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/check-publish-version.mts",
+      "output": "internal/cli/check-publish-version.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/check-syntax.mts",
+      "output": "internal/cli/check-syntax.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/contracts.mts",
+      "output": "internal/cli/contracts.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/goal-maker.mts",
+      "output": "internal/cli/goal-maker.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/npm-registry.mts",
+      "output": "internal/cli/npm-registry.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/postinstall.mts",
+      "output": "internal/cli/postinstall.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/publish-preflight.mts",
+      "output": "internal/cli/publish-preflight.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/release-inputs.mts",
+      "output": "internal/cli/release-inputs.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/release-readiness.mts",
+      "output": "internal/cli/release-readiness.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/cli/sync-skill-tree.mts",
+      "output": "internal/cli/sync-skill-tree.mjs",
+      "project": "node"
+    },
+    {
+      "source": "internal/site/script.ts",
+      "output": "internal/site/script.js",
+      "project": "browser"
+    }
+  ]
+}

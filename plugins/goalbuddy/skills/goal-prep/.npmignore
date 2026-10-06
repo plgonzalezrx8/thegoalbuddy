@@ -1,0 +1,10 @@
+# package.json's directory allowlist overrides root ignores. Keep these rules
+# inside the installable tree so npm excludes development-only skill files.
+**/test/**
+**/tests/**
+**/fixtures/**
+**/build/**
+**/node_modules/**
+**/.goalbuddy-board/**
+**/.env
+**/.env.*

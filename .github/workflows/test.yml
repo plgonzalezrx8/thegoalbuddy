@@ -24,5 +24,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Install pinned development dependencies
+        env:
+          GOALBUDDY_SKIP_POSTINSTALL: "1"
+        run: npm ci --no-audit --no-fund
+
       - name: Run checks
         run: npm run check

@@ -1,0 +1,15 @@
+# Installed users need generated runtime and assets, not development fixtures.
+**/test/**
+**/tests/**
+**/fixtures/**
+**/build/**
+**/.goalbuddy-board/**
+**/node_modules/**
+**/.npmrc
+**/.env
+**/.env.*
+audit/**
+docs/goals/**
+.build/**
+dist/**
+*.tgz
