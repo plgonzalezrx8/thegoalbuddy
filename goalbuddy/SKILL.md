@@ -5,6 +5,8 @@ description: Goal Prep for thegoalbuddy. Use for broad, long-running, stalled, v
 
 # Goal Prep
 
+**thegoalbuddy · Keep your goal in sight.** Start a goal, resume existing work, or unblock the next step using local files and recorded evidence. The constellation board is a read-only observatory; execution happens in your coding tool.
+
 `$goal-prep` (Codex) or `/goal-prep` (Claude Code) prepares a thegoalbuddy board. It does not start execution automatically, but the board and harness-specific starter command must be shaped so the next run continues into safe execution by default.
 
 thegoalbuddy is for autonomous, long-running Codex or Claude Code work where the PM thread may need to discover the work, define tasks, sequence them, delegate them, execute them, verify them, and keep going without the human decomposing every step.
@@ -48,6 +50,10 @@ Allowed `$goal-prep` actions:
 - ask whether to start execution, refine the board, or stop.
 
 If the prompt names another skill or tool, such as "use the taste skill", "refresh the taste skill", "look at this repo", "use browser", or "generate assets", record that requirement in the charter and seed tasks. Do not load that skill, browse that repo, or generate those assets during `$goal-prep`.
+
+## Bundled Runtime
+
+The skill ships generated JavaScript runtime from maintained TypeScript sources. Invoke the existing `.mjs` scripts with plain Node 18 or later; installed users do not need TypeScript, build tools, or development dependencies. Contributors edit the canonical TypeScript sources and regenerate the plugin mirror from the repository.
 
 ## Update Check
 

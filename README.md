@@ -1,18 +1,24 @@
 # thegoalbuddy
 
+[Website](https://thegoalbuddy.pete-nektarios.chatgpt.site) · [Source](https://github.com/plgonzalezrx8/thegoalbuddy)
+
 **Keep your goal in sight.**
 
 thegoalbuddy gives long coding runs a destination, a current task, and evidence of progress. Its constellation board helps you see what is moving, what needs attention, and how the work will be verified. Your repository holds the plan; Codex or Claude Code does the work.
 
 <p align="center">
+  <img src="internal/assets/constellation-star.png" alt="" width="48">
+  <br>
   <img src="internal/assets/constellation-board.png" alt="thegoalbuddy constellation board: a local goal viewer showing active work, completion criteria, decisions, and evidence." width="100%">
 </p>
+
+*Example local board. Your goal files determine the tasks, decisions, and evidence shown.*
 
 This is an MIT-licensed fork of [GoalBuddy by tolimarchuk](https://github.com/tolimarchuk/goalbuddy), revived as **thegoalbuddy**. The original copyright is retained in LICENSE.
 
 ## Start Here
 
-The fork npm package **has not been published by this change**. From this checkout, with Node 18 or later, install into Codex and Claude Code:
+The fork npm package **has not been published by this change**. From this checkout, with Node 18 or later, install into Codex and Claude Code. Committed generated runtime works directly with Node; installation does not require a TypeScript compiler:
 
 ```bash
 node internal/cli/goal-maker.mjs
@@ -203,9 +209,25 @@ See the [running changelog](CHANGELOG.md) for the complete release history. Vers
 - refactors with verification steps
 - anything too large for one prompt
 
+## Develop from TypeScript
+
+All maintained program code, tests, fixtures, and build tools are authored in TypeScript. `.mts` sources generate Node `.mjs` modules; browser `.ts` sources generate `.js`. Generated installable files remain committed so native Git-installed plugins work without a compiler. Edit TypeScript sources, then regenerate runtime and the canonical skill mirror.
+
+From a checkout, use these contributor commands (POSIX shell):
+
+```bash
+GOALBUDDY_SKIP_POSTINSTALL=1 npm ci
+npm run build
+npm run typecheck
+npm run check
+npm run build:site
+```
+
+`npm run check` verifies source, generated output, behavior, branding, and website assets before npm packaging. It does not create an npm tarball or publish. The website export goes to `dist/` for Sites hosting on the assigned Codex subdomain. Goal files stay local; the marketing website does not host your boards. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development boundary and [site hosting](https://github.com/plgonzalezrx8/thegoalbuddy/blob/main/internal/site/DNS.md) for the deployment process.
+
 ## For This Repo
 
-thegoalbuddy is MIT licensed. This fork is configured for npm publication; publication is not part of this change.
+thegoalbuddy is MIT licensed. This fork is preparing version 0.5.0. Complete TypeScript, host, browser, hosted website, and independent review checks before building the final npm artifact. Test that exact artifact; publication requires explicit authorization.
 
 The implementation lives in this repo, but the happy path is intentionally tiny: install it, run Goal Prep, then use the printed Codex `/goal` or Claude Code `/goalbuddy` command.
 

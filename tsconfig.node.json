@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "module": "NodeNext", "moduleResolution": "NodeNext", "lib": ["ES2022"], "types": ["node"], "outDir": ".build/node" },
+  "include": ["internal/cli/**/*.mts", "goalbuddy/scripts/**/*.mts", "goalbuddy/surfaces/local-goal-board/scripts/**/*.mts", "goalbuddy/types/**/*.ts"]
+}

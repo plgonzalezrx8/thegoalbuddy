@@ -1,6 +1,6 @@
-# Local Goal Board
+# thegoalbuddy · Local Goal Board
 
-Open a local constellation of your goal, current work, decisions, and evidence. The board is a read-only viewer; execution and updates happen in your coding tool.
+**Keep your goal in sight.** Open a local constellation of your goal, current work, decisions, and evidence. The board is a read-only viewer; execution and updates happen in your coding tool.
 
 The surface keeps `state.yaml` authoritative. It writes static web app files into the goal directory and serves them from a local-only Node server. The browser subscribes to Server-Sent Events, so the view and open task details update as `state.yaml`, `notes/`, or linked depth-1 sub-goal state changes without a manual reload.
 
@@ -12,6 +12,8 @@ The surface keeps `state.yaml` authoritative. It writes static web app files int
 - A parent task should show a depth-1 child board without replacing the parent board.
 
 ## Generate And Serve
+
+The browser and server runtime is generated from TypeScript and runs with plain Node; installed users do not need a compiler. Contributors edit `.mts` server sources and `.ts` browser sources, then run `npm run build` from the repository root.
 
 Before the fork is published to npm, run from this checkout (replace `<slug>` with your prepared goal directory):
 
@@ -28,6 +30,8 @@ docs/goals/<slug>/.goalbuddy-board/
   index.html
   styles.css
   app.js
+  constellation.js
+  assets/
 ```
 
 Then it starts or reuses the shared local board hub at `http://thegoalbuddy.localhost:41737/`. The server still binds to loopback, so no `/etc/hosts` setup is required. The printed board URL includes the goal slug, like `http://thegoalbuddy.localhost:41737/my-goal/`. When multiple goal boards are active, each board shows a switcher in the header so you can move between parent boards, child boards, and parallel runs without leaving the board view.
@@ -37,7 +41,7 @@ These URLs work when the browser can reach the machine running the board. For cl
 ## Check Without A Long-Running Server
 
 ```bash
-npx thegoalbuddy board docs/goals/<slug> \
+node internal/cli/goal-maker.mjs board docs/goals/<slug> \
   --once \
   --json
 ```
@@ -81,7 +85,9 @@ An evidence path means **evidence was recorded**, not that it passed verificatio
 ## Verification
 
 ```bash
-node --test goalbuddy/surfaces/local-goal-board/test/*.test.mjs
+npm run typecheck
+npm run test:board
+npm run check:generated
 node goalbuddy/surfaces/local-goal-board/scripts/local-goal-board.mjs \
   --goal goalbuddy/surfaces/local-goal-board/examples/keyboard-navigation \
   --once \
@@ -96,4 +102,5 @@ The `examples/keyboard-navigation` goal is a structurally valid preview of the o
 - The server binds to `127.0.0.1:41737` by default, advertises `http://thegoalbuddy.localhost:41737/`, and reuses that URL as a multi-board hub with in-board header navigation.
 - Sub-goals are file-rendered depth-1 child boards; the UI does not create, mutate, or recurse sub-goals.
 - The generated UI renders file content as text, not raw HTML.
-- No package dependencies are required.
+- The installed runtime requires no package dependencies or TypeScript compiler.
+- The marketing website on Sites does not store goals or serve this local board.

@@ -30,7 +30,12 @@ When improving this repo, consider README, `goalbuddy/SKILL.md`, legacy CLI comp
 - Keep the `goal-maker` CLI compatibility alias working. The installer removes obsolete personal prep skills to avoid duplicate invocation.
 - Keep package-only CLI and tests under `internal/`.
 - Do not commit local `docs/goals/` run artifacts unless explicitly requested.
-- Run `npm run check` before claiming implementation is complete.
+- Author all maintained program code, tests, executable fixtures, and tooling in TypeScript: Node `.mts` and browser `.ts`. JavaScript is generated output only.
+- Edit TypeScript sources, then run `npm run build`. Generated installable `.mjs`/`.js` files and the inventory are committed so direct Git plugin installation requires no compiler.
+- Never repair generated drift as part of verification: `npm run check:generated` must fail on stale or unowned JavaScript, interrupted generation, or mirror drift.
+- `npm run check` is the required source check before claiming implementation is complete. It does not pack. Final npm packaging requires matching readiness, actual host/browser/hosted Sites evidence, and independent review.
+- Use `npm run package:release -- --readiness <report> --destination <directory>` only after those stages pass. `npm run check:package -- --tarball <absolute-path>` tests that exact supplied artifact without repacking.
+- Keep automatic publication disabled until verified evidence can be transported to the release runner. Publication still requires explicit authorization.
 
 ## Release Rules
 

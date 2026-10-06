@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "module": "ES2022", "moduleResolution": "Bundler", "lib": ["ES2022", "DOM", "DOM.Iterable"], "types": [], "moduleDetection": "force", "outDir": ".build/browser" },
+  "include": ["goalbuddy/surfaces/local-goal-board/ui/**/*.ts", "internal/site/**/*.ts", "goalbuddy/types/**/*.ts"]
+}

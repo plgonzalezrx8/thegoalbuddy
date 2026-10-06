@@ -1,59 +1,32 @@
-# thegoalbuddy site hosting
+# thegoalbuddy website on Sites
 
-The fork's static site source is `internal/site`, with deployment defined in `.github/workflows/pages.yml`. No site was deployed as part of the branding change.
+The canonical website source lives in `internal/site/` in this repository. Sites hosts a reproducible static export on its assigned Codex subdomain. No custom domain has been purchased; domain purchase and DNS configuration are deferred.
 
-The default GitHub Pages URL for this repository, once Pages is enabled and a deployment succeeds, is:
+Current website origin: **https://thegoalbuddy.pete-nektarios.chatgpt.site**. Use the exact URL returned by Sites before deployment or final verification. Do not guess a subdomain or retain the former GitHub Pages URL in active metadata. GitHub Pages deployment has been retired.
 
-```text
-https://plgonzalezrx8.github.io/thegoalbuddy/
-```
+## Build and export
 
-The upstream `goalbuddy.dev` CNAME has been removed from this fork. Do not publish using that domain unless its owner explicitly transfers it. Choose and verify any new custom domain before adding a new CNAME or changing canonical/social URLs.
-
-## Historical upstream configuration
-
-The following records describe the upstream project, not this fork:
-
-- Repository: `tolimarchuk/goalbuddy`
-- Pages build type: GitHub Actions workflow
-- Custom domain: `goalbuddy.dev`
-- Published artifact path: `internal/site`
-
-Cloudflare is authoritative for `goalbuddy.dev`:
-
-```text
-serena.ns.cloudflare.com
-will.ns.cloudflare.com
-```
-
-Required Cloudflare DNS records for the apex domain:
-
-```text
-Type  Name  Content
-A     @     185.199.108.153
-A     @     185.199.109.153
-A     @     185.199.110.153
-A     @     185.199.111.153
-AAAA  @     2606:50c0:8000::153
-AAAA  @     2606:50c0:8001::153
-AAAA  @     2606:50c0:8002::153
-AAAA  @     2606:50c0:8003::153
-```
-
-Recommended `www` redirect support:
-
-```text
-Type   Name  Content
-CNAME  www   tolimarchuk.github.io
-```
-
-After DNS resolves, re-check:
+From a prepared TypeScript development checkout:
 
 ```bash
-dig goalbuddy.dev +noall +answer -t A
-dig goalbuddy.dev +noall +answer -t AAAA
-dig www.goalbuddy.dev +nostats +nocomments +nocmd
-curl -I https://goalbuddy.dev/
+npm run typecheck
+npm run check:branding
+npm run check:site
+npm run build:site
 ```
 
-Then enforce HTTPS in GitHub Pages once the certificate is issued.
+`npm run build:site` produces `dist/` from maintained HTML, CSS, assets, and generated browser runtime. The export must contain no goals, npm credentials, tests, development tools, or release evidence. Self-hosted fonts retain their SIL Open Font License files. The marketing website is independent of the loopback goal board; it does not host or store local goal files.
+
+## Sites identity and deployment
+
+Use a dedicated deployment checkout at `/workspace/sites/thegoalbuddy`. It records an export from this repository, not another maintained website implementation. Record the originating thegoalbuddy revision and the export's Sites source commit.
+
+Read `.openai/hosting.json` in that checkout first. Reuse its exact `project_id` when present; otherwise create one Site and persist the returned ID immediately. Its static configuration uses `static.directory: "dist"`. Preserve the chosen audience; new Sites remain owner-private unless the owner explicitly chooses public access.
+
+The hosting workflow uses Sites' supported source helper and version/deployment tools. Keep source credentials in session memory and send them through hidden stdin. Save the exact source version before deploying; retain its project, source commit, version, and deployment IDs. A successful local build is not hosted verification.
+
+Use Sites' returned origin for the canonical URL, Open Graph URL/image, social image, README website link, and package homepage. Rebuild after those changes. Verify the terminal hosted deployment at its literal URL, including assets, metadata, navigation, clipboard success and denial, desktop/mobile layouts, keyboard access, and reduced motion for the intended audience. Required checks that cannot be performed remain explicit blockers before final npm packaging.
+
+## Future custom domain
+
+When the owner purchases a domain, use Sites' supported domain configuration, verify ownership and HTTPS, then update canonical/social metadata and links together. Do not add a GitHub Pages CNAME or use an upstream domain. Hosting a website does not authorize npm publication; that remains the final, explicitly authorized release step.

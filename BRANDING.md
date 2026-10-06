@@ -34,3 +34,9 @@ Explain **Start, Resume, Unblock** before internal terms such as oracle, receipt
 ## Assets
 
 The board's canonical assets live in `goalbuddy/surfaces/local-goal-board/assets/`. The marketing site carries copies of the generated sky and star, self-hosted fonts, and an actual example board screenshot. Keep marketing screenshots labelled as examples and update them when the shipped interface changes. No customer endorsements or third-party logo claims without verified permission and evidence.
+
+## Documentation and hosting
+
+Use **Keep your goal in sight.** as the headline and **Start, Resume, Unblock** as the introductory workflow. README, plugin instructions, the local board, and the marketing website share this identity. Label example screenshots; do not present sample tasks as verified product results.
+
+The marketing website is hosted through Sites on its assigned Codex subdomain. Its current canonical origin is recorded in [site hosting](internal/site/DNS.md); custom-domain purchase is deferred. The marketing website and the loopback board serve different purposes: Sites publishes product information, while each board reads local goal files. Keep the original upstream release art and release names in historical records, and preserve compatibility identifiers in commands and file paths.

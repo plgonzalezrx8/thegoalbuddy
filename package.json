@@ -12,6 +12,7 @@
     ".agents/plugins/marketplace.json",
     ".claude-plugin/marketplace.json",
     "CHANGELOG.md",
+    "BRANDING.md",
     "README.md",
     "CONTRIBUTING.md",
     "docs/releases",
@@ -22,17 +23,35 @@
     "goalbuddy"
   ],
   "scripts": {
-    "check": "npm run check:syntax && node --test internal/test/*.test.mjs goalbuddy/surfaces/local-goal-board/test/*.test.mjs",
+    "check": "npm run check:source",
     "check:syntax": "node internal/cli/check-syntax.mjs",
-    "test": "node --test internal/test/*.test.mjs goalbuddy/surfaces/local-goal-board/test/*.test.mjs",
-    "pack:dry-run": "npm pack --dry-run",
+    "test": "npm run test:source",
+    "pack:dry-run": "node internal/cli/check-package.mjs",
     "sync:plugin": "node internal/cli/sync-skill-tree.mjs --write",
     "postinstall": "node internal/cli/postinstall.mjs",
     "publish:identity": "node internal/cli/check-publish-identity.mjs",
     "publish:check": "node internal/cli/publish-preflight.mjs",
     "prepublishOnly": "node internal/cli/publish-preflight.mjs",
     "publish:status": "node internal/cli/check-publish-status.mjs",
-    "pack:check": "node internal/cli/check-package.mjs"
+    "pack:check": "node internal/cli/check-package.mjs",
+    "build:tools": "tsc -p tsconfig.tools.json",
+    "build": "npm run build:tools && node .build/tools/internal/build/build.mjs",
+    "typecheck": "tsc -p tsconfig.tools.json --noEmit && tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.browser.json --noEmit && tsc -p tsconfig.tests.json --noEmit && tsc -p tsconfig.qa.json --noEmit",
+    "check:generated": "npm run build:tools && node .build/tools/internal/build/check-generated.mjs",
+    "check:mirror": "node internal/cli/sync-skill-tree.mjs",
+    "check:source": "npm run typecheck && npm run check:generated && npm run test:source && npm run check:site",
+    "test:source": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs source",
+    "test:skill": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs skill",
+    "test:cli": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs cli",
+    "test:board": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs board",
+    "test:release": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs release",
+    "check:package": "npm run build:tools && node .build/tools/internal/build/run-tests.mjs package",
+    "check:site": "npm run build:tools && node .build/tools/internal/build/build-site.mjs --check",
+    "check:branding": "npm run check:site",
+    "build:site": "npm run build:tools && node .build/tools/internal/build/build-site.mjs",
+    "check:readiness": "npm run build:tools && node .build/tools/internal/build/verify-readiness.mjs",
+    "package:release": "npm run build:tools && node .build/tools/internal/build/package-release.mjs",
+    "test:browser": "tsc -p tsconfig.qa.json && node .build/qa/internal/build/browser-qa.mjs"
   },
   "repository": {
     "type": "git",
@@ -63,7 +82,7 @@
   "bugs": {
     "url": "https://github.com/plgonzalezrx8/thegoalbuddy/issues"
   },
-  "homepage": "https://github.com/plgonzalezrx8/thegoalbuddy#readme",
+  "homepage": "https://thegoalbuddy.pete-nektarios.chatgpt.site",
   "engines": {
     "node": ">=18"
   },
@@ -76,5 +95,10 @@
       "name": "tolimarchuk",
       "url": "https://github.com/tolimarchuk"
     }
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "18.19.130",
+    "playwright-core": "1.57.0",
+    "typescript": "5.8.3"
+  }
 }

@@ -14,10 +14,12 @@ First release candidate of the **thegoalbuddy** fork. The package, command, and 
 - **Live details and accessibility.** Open task and child-task details update with local state, preserve focus, and support Tab, Shift+Tab, and Escape. Removed tasks return focus to a stable visible target.
 - **Execution safeguards.** Dispatch scope checks inspect already-dirty files, modes, index changes, and protected goal files. Receipt application rejects failed, unsafe, incomplete, or mismatched dispatch reports before changing state.
 - **Clearer onboarding and updates.** Start, Resume, and Unblock precede internal terminology. Installation provenance distinguishes npm, global npm, and native plugins; copied Claude skills recommend the correct update route. Fresh Codex homes are created before native marketplace registration.
-- **Release checks.** Both direct publication and the release workflow require identity, eligible versions, complete checks, mirror consistency, and package completeness. CI checks the exact version and treats registry errors separately from confirmed absence.
+- **TypeScript development.** Program code, tests, fixtures, and build/release tools are maintained in TypeScript. Generated Node and browser runtime preserves plain-Node installation, native plugin checkout support, and the dependency-free runtime. Compiler, generated-output, and mirror checks reject drift.
+- **Sites website.** The accepted Constellation Observatory website is prepared for Sites hosting on an assigned Codex subdomain, with repository-controlled source, self-hosted assets, and a local-file product model. Deployment evidence is recorded separately from npm release status.
+- **Release checks.** Typechecks, behavior, host/browser adoption, hosted website verification, and independent review precede the final npm artifact. Identity, version eligibility, readiness, and artifact installation guard the final release; explicit authorization is required before publishing.
 - **Installation coverage.** Real tarball smoke tests exercise scripts-enabled local and global installs, installed executables, npm exec, target setup, doctor, updates, and observatory assets in isolated homes.
 
-No npm publication, GitHub release, or deployment is recorded for this candidate.
+No npm publication or GitHub release is recorded for this candidate. Website deployment status and its exact Sites URL belong in the hosting evidence; website deployment does not authorize npm publication.
 
 ## 0.4.3: Restore Claude's Native `/goal` (2026-08-05)
 
