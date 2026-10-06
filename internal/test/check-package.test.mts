@@ -2,6 +2,7 @@ import { object, array, text, texts, parseObject } from "./fixtures/cli-json.mjs
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { checkPackage, verifyPackageContents, verifyManifestParity, expectedPackageFiles } from "../cli/check-package.mjs";
 
 const root = process.env.THEGOALBUDDY_TEST_ROOT || process.cwd();
@@ -45,4 +46,21 @@ test("package inspection fails closed on npm and malformed JSON failures", () =>
   assert.throws(() => checkPackage({ runPack: () => ({ status: 1, stdout: "[]" }) }), /Unable/);
   assert.throws(() => checkPackage({ runPack: () => ({ status: 0, stdout: "no JSON" }) }), /malformed/);
   assert.throws(() => checkPackage({ runPack: () => ({ status: 0, stdout: "[]" }) }), /one artifact/);
+});
+
+test("npm's actual directory allowlist excludes development tests and retains complete runtime", async () => {
+  // Enumerate npm's real selection without creating or repacking an artifact.
+  // npm injects its entrypoint for npm-run commands on all supported platforms.
+  const npmEntrypoint = process.env.npm_execpath;
+  assert.ok(npmEntrypoint, "Run this integration through an npm script");
+  const npmRequire = createRequire(npmEntrypoint);
+  const Constructor: unknown = npmRequire("@npmcli/arborist");
+  const select: unknown = npmRequire("npm-packlist");
+  assert.equal(typeof Constructor, "function");
+  assert.equal(typeof select, "function");
+  const arborist = new (Constructor as new (options: { path: string }) => { loadActual(): Promise<unknown> })({ path: root });
+  const selected: unknown = await (select as (tree: unknown) => Promise<unknown>)(await arborist.loadActual());
+  assert.ok(Array.isArray(selected) && selected.every(path => typeof path === "string"));
+  const files = selected as string[];
+  assert.equal(verifyPackageContents({ root, pack: { name: pkg.name, version: pkg.version, files: files.map(path => ({ path })) } }).version, pkg.version);
 });

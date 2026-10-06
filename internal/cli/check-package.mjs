@@ -41,6 +41,7 @@ function listFiles(root, relative) {
 /** Tests/build infrastructure are intentionally absent from installed runtime. */
 function isInstallableFile(path) {
     return !/(^|\/)(?:test|tests|fixtures|build)(?:\/|$)/.test(path)
+        && !/(^|\/)\.npmignore$/.test(path)
         && !/(^|\/)tsconfig[^/]*\.json$/.test(path)
         && !/\.test\.[cm]?[jt]s$/.test(path);
 }
